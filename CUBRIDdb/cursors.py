@@ -1,8 +1,8 @@
 import sys
 from CUBRIDdb import FIELD_TYPE
-from cubrid_log import setup_logging
+from CUBRIDdb import cubrid_log
 
-logger = setup_logging()
+cubrid_log.LoggerFactory.create_logger()
 
 class BaseCursor(object):
     """
@@ -25,7 +25,7 @@ class BaseCursor(object):
 
         self.charset = conn.charset
         self._cs._set_charset_name(conn.charset)
-        logger.warning("__init__")
+        cubrid_log.LoggerFactory._LOGGER.warning("__init__")
 
     def __del__(self):
         try:
@@ -78,7 +78,7 @@ class BaseCursor(object):
                         args[i] = str(args[i])
                 finally:
                     #logger.info("hwanyseo args type i = {0}  type : {1}".foramt(i, type(args[i])))
-                    logger.info("temp test")
+                    cubrid_log.LoggerFactory._LOGGER.info("temp test")
 
             if type(args[i]) != tuple:
                 self._cs.bind_param(i+1, args[i])

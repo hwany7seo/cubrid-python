@@ -12,6 +12,7 @@ import warnings
 try:
     import CUBRIDdb as Database
     from CUBRIDdb import FIELD_TYPE
+    from CUBRIDdb import cubrid_log
 except ImportError as e:
     from django.core.exceptions import ImproperlyConfigured
     raise ImproperlyConfigured("Error loading CUBRIDdb module: %s" % e)
@@ -35,6 +36,8 @@ elif django.VERSION >= (1, 8):
     from django.db.backends.base.operations import BaseDatabaseOperations
     from django.utils.functional import cached_property
 
+
+cubrid_log.LoggerFactory.create_logger()
 
 """
 Takes a CUBRID exception and raises the Django equivalent.
@@ -543,7 +546,8 @@ def django_fetch_value_converter(row, descriptor):
     for des in descriptor:
         if des[1] == FIELD_TYPE.DATETIME and timezone.is_naive(row[index]):
             row[index] = row[index].replace(tzinfo=timezone.utc)
-
+        
+        cubrid_log.LoggerFactory._LOGGER.info("des {0}".format(des[1]))
         index = index + 1
 
     return row
