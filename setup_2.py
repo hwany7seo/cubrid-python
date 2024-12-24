@@ -120,14 +120,14 @@ else:
 # set py_modules
 if sys.version_info[0] == 2 and sys.version_info[1] >= 5:
     py_modules = [
-        "CUBRIDdb.connections", "CUBRIDdb.cursors", "CUBRIDdb.FIELD_TYPE",
+        "CUBRIDdb.connections", "CUBRIDdb.cursors", "CUBRIDdb.FIELD_TYPE", "CUBRIDdb.cubrid_log",
         "django_cubrid.base", "django_cubrid.client", "django_cubrid.compiler",
         "django_cubrid.creation", "django_cubrid.introspection",
         "django_cubrid.validation",
         ]
 else:
     py_modules = ["CUBRIDdb.connections",
-                  "CUBRIDdb.cursors", "CUBRIDdb.FIELD_TYPE"]
+                  "CUBRIDdb.cursors", "CUBRIDdb.FIELD_TYPE", "CUBRIDdb.cubrid_log"]
 
 # Install CUBRID-Python driver.
 setup(

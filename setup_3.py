@@ -118,7 +118,7 @@ else:
 
 
 # set py_modules
-py_modules = ["CUBRIDdb.connections", "CUBRIDdb.cursors", "CUBRIDdb.FIELD_TYPE"]
+py_modules = ["CUBRIDdb.connections", "CUBRIDdb.cursors", "CUBRIDdb.FIELD_TYPE", "CUBRIDdb.cubrid_log"]
 if sys.version >= '3':
     py_modules += [
         "django_cubrid.base", "django_cubrid.client", "django_cubrid.compiler",

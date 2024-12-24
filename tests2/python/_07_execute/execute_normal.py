@@ -55,7 +55,7 @@ class ExecuteNormalTest(unittest.TestCase):
                 self.cursor.execute(nsql4)
                 self.row_sl=self.cursor.fetchone ()
                 c_sl=self.row_sl[0]
-                self.assertEqual(c_sl,100)
+                self.assertEqual(int(c_sl),100)
                 #self.conn.commit()
                 
         def test_update(self):
