@@ -25,6 +25,7 @@ class BaseCursor(object):
 
         self.charset = conn.charset
         self._cs._set_charset_name(conn.charset)
+        logger.warning("__init__")
 
     def __del__(self):
         try:
