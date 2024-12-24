@@ -77,8 +77,7 @@ class BaseCursor(object):
                     else:
                         args[i] = str(args[i])
                 finally:
-                    #logger.info("hwanyseo args type i = {0}  type : {1}".foramt(i, type(args[i])))
-                    cubrid_log.LoggerFactory._LOGGER.info("temp test")
+                    cubrid_log.LoggerFactory._LOGGER.info("hwanyseo args type i = {0}  type : {1}".foramt(i, type(args[i])))
 
             if type(args[i]) != tuple:
                 self._cs.bind_param(i+1, args[i])
