@@ -120,6 +120,7 @@ class BaseCursor(object):
         r = self._cs.execute()
         self.rowcount = self._cs.rowcount
         self.description = self._cs.description
+        cubrid_log.LoggerFactory._LOGGER.info("r : {0}".format(r))
         return r
 
     def executemany(self, query, args):
