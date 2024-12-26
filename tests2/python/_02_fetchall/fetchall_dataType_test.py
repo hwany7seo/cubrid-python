@@ -3,6 +3,7 @@ import CUBRIDdb
 import locale
 import time
 import datetime 
+import _cubrid
 from datetime import time
 from datetime import date
 from datetime import datetime
@@ -169,14 +170,15 @@ class FetchoneTypeTest(unittest.TestCase):
                 for i in dataList:
                         sqlInsert = sqlInsert + "('" + i + "'),"
                 sqlInsert = sqlInsert.rstrip(',')
-                rowNum = self.cur.execute(sqlInsert)
-                sqlSelect = "select * from character_db"
-                self.cur.execute(sqlSelect)
-		results=self.cur.fetchall()
-		for res in results:
-			print(res)
-		self.assertEquals(3,len(results))
-		print
+                try:
+                    rowNum = self.cur.execute(sqlInsert)
+                except _cubrid.IntegrityError, e:
+                    errorValue = str(e)[1:5]
+                    self.assertEquals("-494",errorValue)
+                else:
+                    self.assertTrue(False, "IntegrityError should be raised.")
+                finally:
+                    print
 
         def test_nchar(self):
 #               test normal string type
@@ -207,14 +209,15 @@ class FetchoneTypeTest(unittest.TestCase):
                 for i in dataList:
                         sqlInsert = sqlInsert + "('" + i + "'),"
                 sqlInsert = sqlInsert.rstrip(',')
-                rowNum = self.cur.execute(sqlInsert)
-                sqlSelect = "select * from character_db"
-                self.cur.execute(sqlSelect)
-		results=self.cur.fetchall()
-		for res in results:
-			print(res)
-		self.assertEquals(3,len(results))
-		print
+                try:
+                    rowNum = self.cur.execute(sqlInsert)
+                except _cubrid.IntegrityError, e:
+                    errorValue = str(e)[1:5]
+                    self.assertEquals("-494",errorValue)
+                else:
+                    self.assertTrue(False, "IntegrityError should be raised.")
+                finally:
+                    print
 
         def test_varnchar(self):
 #                print "test normal string type"

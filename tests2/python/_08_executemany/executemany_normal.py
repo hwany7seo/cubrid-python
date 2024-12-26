@@ -38,7 +38,7 @@ class ExecuteManyTest(unittest.TestCase):
                 self.cursor.execute(nsql4)
                 self.row_sl=self.cursor.fetchone ()
                 c_sl=self.row_sl[0]
-                self.assertEqual(c_sl,2)
+                self.assertEqual(c_sl,repr(2))
 
         def test_select(self):
                 print "executemany select !"

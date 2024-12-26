@@ -1,2 +1,8 @@
 build
 cubrid-python-*
+tests2/function_result/
+tests2/out
+tests/out
+tests/python2_result/
+tests/python3_result/
+tests2/tests2.result

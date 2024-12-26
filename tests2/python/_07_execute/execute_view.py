@@ -24,7 +24,7 @@ class ExecuteViewTest(unittest.TestCase):
                 #view_tb and view v 
                 nsql2='drop table if exists view_tb'
                 self.cursor.execute(nsql2)
-                nsql3='create table view_tb(qty INT, price INT)'
+                nsql3='create table view_tb(qty INT, price INT) DONT_REUSE_OID'
                 self.cursor.execute(nsql3)
                 viewSql="INSERT INTO view_tb VALUES (3,50)"
                 valueInsert=self.cursor.execute(viewSql)
@@ -37,7 +37,7 @@ class ExecuteViewTest(unittest.TestCase):
                 #table a_tbl and view b_view
                 nsql2='drop table if exists py_a_tbl'
                 self.cursor.execute(nsql2)
-                nsql3='CREATE TABLE py_a_tbl(id INT NOT NULL,phone VARCHAR(10))'
+                nsql3='CREATE TABLE py_a_tbl(id INT NOT NULL,phone VARCHAR(10)) DONT_REUSE_OID'
                 self.cursor.execute(nsql3)
                 insertSql="INSERT INTO py_a_tbl VALUES(1,'111-1111'), (2,'222-2222'), (3, '333-3333'), (4, NULL), (5, NULL)"
                 valueInsert=self.cursor.execute(insertSql)
@@ -67,7 +67,7 @@ class ExecuteViewTest(unittest.TestCase):
                 self.row_sl=self.cursor.fetchone()
                 print (self.row_sl[0],self.row_sl[1])
                 c_sl=self.row_sl[1]
-                self.assertEqual(c_sl,'select [view_tb].[qty], [view_tb].[price], [view_tb].[qty]*[view_tb].[price] from [view_tb] [view_tb]')
+                self.assertEqual(c_sl,'select [dba.view_tb].[qty], [dba.view_tb].[price], [dba.view_tb].[qty]*[dba.view_tb].[price] from [dba.view_tb] [dba.view_tb]')
 
         
         def test_alter(self):

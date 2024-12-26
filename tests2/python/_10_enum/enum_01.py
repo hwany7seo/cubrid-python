@@ -62,7 +62,7 @@ class Enum01Test(unittest.TestCase):
                 self.cursor.execute(nsql4)
                 self.row_sl=self.cursor.fetchone ()
                 c_sl=self.row_sl[0]
-                self.assertEqual(c_sl,3)
+                self.assertEqual(c_sl,repr(3))
                 self.conn.commit()
 
 if __name__ == '__main__':

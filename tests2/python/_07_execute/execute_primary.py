@@ -123,7 +123,7 @@ class ExecutePrimaryTest(unittest.TestCase):
                 self.row_up=self.cursor.fetchone()
                 print (self.row_up[0])
                 result_up1=self.row_up[0]
-                self.assertEqual(result_up1, 4)
+                self.assertEqual(result_up1, repr(4))
 
 
                 print "foreign table update!"
@@ -135,7 +135,7 @@ class ExecutePrimaryTest(unittest.TestCase):
                 self.row_up2=self.cursor.fetchone()
                 print (self.row_up2[0])
                 result_up3=self.row_up2[0]
-                self.assertEqual(result_up3, 4)
+                self.assertEqual(result_up3, repr(4))
 
 if __name__ == '__main__':
         suite = unittest.TestLoader().loadTestsFromTestCase(ExecutePrimaryTest)

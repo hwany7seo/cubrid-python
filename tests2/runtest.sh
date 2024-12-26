@@ -13,11 +13,13 @@ VALGRIND="valgrind --leak-check=full"
 python="python"
 test_mode="normal"
 test_case="functional_only"
+all_test_result_file=tests2.result
 
 rm -rf memoryLeaklog
 mkdir  memoryLeaklog
 rm -rf function_result
 mkdir  function_result
+rm $all_test_result_file
 
 get_options "$@"
 
@@ -55,14 +57,14 @@ done
 for tc in $(cat $testcases)
 do
 	tcb=$(basename $tc)
-	echo -n "Running TestCase ($tcb) $tc "
+	echo -n "Running TestCase ($tcb) $tc " | tee -a $all_test_result_file
 	if [ $test_mode = "normal" ];then
 		$python $tc >> $FUNC_LOG/$tcb.result 2>&1
 	else
 		$VALGRIND --log-file=$MEM_LOG/$tcb.memLeak $python $tc >> $FUNC_LOG/$tcb.result 2>&1
 	fi
 	verdict=$(check_verdict $FUNC_LOG/$tcb.result)
-	echo $verdict
+	echo $verdict | tee -a $all_test_result_file
 done
 
 if [ "$test_case" != "functional_only" ];then
