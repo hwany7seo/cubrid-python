@@ -5,6 +5,8 @@ import os
 import sys
 import platform
 
+print("Driver Version:", python_version)
+
 #if sys.version >= '3':
 #    PY3 = True
 #else:
@@ -129,7 +131,7 @@ if sys.version >= '3':
 # Install CUBRID-Python driver.
 setup(
     name="CUBRID-Python",
-    version="11.2.0.0010",
+    version=python_version,
     description="Python interface to CUBRID",
     long_description=\
             "Python interface to CUBRID conforming to the python DB API 2.0 "
