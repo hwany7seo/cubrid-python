@@ -95,6 +95,7 @@ if os_type == 'Windows':
                            "gdi32", "user32"],
                 include_dirs=[inc_dir_base, inc_dir_cci],
                 sources=['python_cubrid.c'],
+                extra_compile_args=['/MD'],
             )
         ]
     else:
@@ -131,7 +132,7 @@ if sys.version >= '3':
 # Install CUBRID-Python driver.
 setup(
     name="CUBRID-Python",
-    version=python_version,
+    version=str(python_version),
     description="Python interface to CUBRID",
     long_description=\
             "Python interface to CUBRID conforming to the python DB API 2.0 "

@@ -6,7 +6,7 @@ major_start_date='2017-06-27'
 
 if os.name == 'nt':
     from distutils import msvc9compiler
-    msvc9compiler.VERSION = 14.0 #Visual studio 2015
+    msvc9compiler.VERSION = 14.1 #Visual studio 2015
 
 if sys.version > '3':
     setup_file = "setup_3.py"
