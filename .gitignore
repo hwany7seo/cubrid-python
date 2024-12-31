@@ -8,3 +8,4 @@ tests/python3_result/
 tests2/tests2.result
 CUBRID_Python.egg-info/
 dist/
+temp_release/

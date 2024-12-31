@@ -27,7 +27,9 @@ arch_type = ''
 if platform.system() == 'Windows':
     os_type = 'Windows'
 
-    if platform.architecture()[0] == '32bit':
+    if 'clean' in sys.argv[1:]:
+        os.system("build_cci.bat clean")
+    elif platform.architecture()[0] == '32bit':
         arch_type = 'x86'
         os.system("build_cci.bat x86")
     elif platform.architecture()[0] == '64bit':
@@ -42,7 +44,9 @@ else:
     os_type = 'Linux'
 
     os.system("chmod +x build_cci.sh")
-    if platform.architecture()[0] == '32bit':
+    if 'clean' in sys.argv[1:]:
+        os.system("build_cci.bat clean")
+    elif platform.architecture()[0] == '32bit':
         print('32bit Driver not supported. Exit.')
         sys.exit(1)
     elif platform.architecture()[0] == '64bit':
