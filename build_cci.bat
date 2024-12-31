@@ -5,9 +5,12 @@ echo arg is :%1%
 cd cci-src\win\cas_cci
 
 call "%VS2017COMNTOOLS%VsDevCmd.bat"
-if "%1%"=="x86" (
+if "%1%"=="clean" (
+devenv cas_cci_v141_lib.vcxproj /clean "release|x64"
+) else if "%1%"=="x86" (
 devenv cas_cci_v141_lib.vcxproj /build "release|x86"
 ) else ( 
 devenv cas_cci_v141_lib.vcxproj /build "release|x64"
 )
+
 cd ..\..\..
