@@ -33,11 +33,11 @@ Dependencies for CUBRIDdb
   * OS    : Windows (x86 and x86_64)
             Linux (32bit and 64bit)
             Other Unix and Unix-like os
-  * Python: Python 2.4+
-            Python 3.0+
+  * Python: Python 2.6+
+            Python 3.0 ~ Python 3.6
   * Compiler: to build from Source
-            Visual Studio 2015 (Windows)
-            GNU Developer Toolset 6 or higher
+            Visual Studio 2017 (Windows)
+            GNU Developer Toolset 8 or higher
 ```
 
 Install for CUBRIDdb
@@ -47,7 +47,7 @@ Install for CUBRIDdb
  ``` 
   $ git clone --recursive git@github.com:CUBRID/cubrid-python.git
   $ cd cubrid-python
-  $ python setup.py build
+  $ python setup.py build          (Windows: First, must run env_windows.bat.)
   $ sudo python setup.py install   (Windows: python setup.py install)
 ```
 Documents
