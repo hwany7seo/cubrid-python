@@ -5,6 +5,8 @@ import os
 import sys
 import platform
 
+print("Driver Version:", python_version)
+
 #if sys.version >= '3':
 #    PY3 = True
 #else:
@@ -25,7 +27,9 @@ arch_type = ''
 if platform.system() == 'Windows':
     os_type = 'Windows'
 
-    if platform.architecture()[0] == '32bit':
+    if 'clean' in sys.argv[1:]:
+        os.system("build_cci.bat clean")
+    elif platform.architecture()[0] == '32bit':
         arch_type = 'x86'
         os.system("build_cci.bat x86")
     elif platform.architecture()[0] == '64bit':
@@ -40,7 +44,9 @@ else:
     os_type = 'Linux'
 
     os.system("chmod +x build_cci.sh")
-    if platform.architecture()[0] == '32bit':
+    if 'clean' in sys.argv[1:]:
+        os.system("build_cci.bat clean")
+    elif platform.architecture()[0] == '32bit':
         print('32bit Driver not supported. Exit.')
         sys.exit(1)
     elif platform.architecture()[0] == '64bit':
@@ -93,6 +99,7 @@ if os_type == 'Windows':
                            "gdi32", "user32"],
                 include_dirs=[inc_dir_base, inc_dir_cci],
                 sources=['python_cubrid.c'],
+                extra_compile_args=['/MD'],
             )
         ]
     else:
@@ -129,7 +136,7 @@ if sys.version >= '3':
 # Install CUBRID-Python driver.
 setup(
     name="CUBRID-Python",
-    version="11.2.0.0010",
+    version=str(python_version),
     description="Python interface to CUBRID",
     long_description=\
             "Python interface to CUBRID conforming to the python DB API 2.0 "

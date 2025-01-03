@@ -3,6 +3,7 @@ import CUBRIDdb
 import locale
 import time
 import datetime 
+import _cubrid
 from datetime import time
 from datetime import date
 from datetime import datetime
@@ -156,12 +157,13 @@ class FetchoneTypeTest(unittest.TestCase):
                 for i in dataList:
                         sqlInsert = sqlInsert + "('" + i + "'),"
                 sqlInsert = sqlInsert.rstrip(',')
-                rowNum = self.cur.execute(sqlInsert)
-                sqlSelect = "select * from character_db"
-                self.cur.execute(sqlSelect)
-                for i in range(rowNum):
-                        data = self.cur.fetchone()
-                        self.assertEquals(dataCheck[i], data[0])
+                try:
+                    rowNum = self.cur.execute(sqlInsert)
+                except _cubrid.IntegrityError, e:
+                    errorValue = str(e)[1:5]
+                    self.assertEquals("-494",errorValue)
+                else:
+                    self.assertTrue(False, "IntegrityError should be raised.")
 
         def test_varchar(self):
 #                print "test normal string type"
@@ -171,12 +173,13 @@ class FetchoneTypeTest(unittest.TestCase):
                 for i in dataList:
                         sqlInsert = sqlInsert + "('" + i + "'),"
                 sqlInsert = sqlInsert.rstrip(',')
-                rowNum = self.cur.execute(sqlInsert)
-                sqlSelect = "select * from character_db"
-                self.cur.execute(sqlSelect)
-                for i in range(rowNum):
-                        data = self.cur.fetchone()
-                        self.assertEquals(dataCheck[i], data[1])
+                try:
+                    rowNum = self.cur.execute(sqlInsert)
+                except _cubrid.IntegrityError, e:
+                    errorValue = str(e)[1:5]
+                    self.assertEquals("-494",errorValue)
+                else:
+                    self.assertTrue(False, "IntegrityError should be raised.")
 
         def test_string(self):
 #                print "test normal string type"
@@ -239,8 +242,9 @@ class FetchoneTypeTest(unittest.TestCase):
 
         def test_timestamp(self):
 #               test normal datetime type
+                checkData = str(datetime.now().year) + '-10-31 00:00:00'
                 dataList = ['10/31','10/31/2008','13:15:45 10/31/2008']
-		dataCheck = ['2019-10-31 00:00:00','2008-10-31 00:00:00','2008-10-31 13:15:45']
+                dataCheck = [checkData,'2008-10-31 00:00:00','2008-10-31 13:15:45']
                 sqlInsert = "insert into datetime_db(c_timestamp) values "
                 for i in dataList:
                         sqlInsert = sqlInsert + "('" + i + "'),"

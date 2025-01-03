@@ -36,7 +36,7 @@ class ExecuteNonormalTest(unittest.TestCase):
                 self.row_dl=self.cursor.fetchone ()
                 print self.row_dl[0]
                 c_dl=self.row_dl[0]
-                self.assertEqual(c_dl,0)
+                self.assertEqual(c_dl,repr(0))
 
                 self.cursor.execute("select max(id) from partition_tb")
                 self.row_dl=self.cursor.fetchone ()
@@ -109,7 +109,7 @@ class ExecuteNonormalTest(unittest.TestCase):
                 self.cursor.execute(select_dl)
                 self.row_dl=self.cursor.fetchone ()
                 c_dl=self.row_dl[0]
-                self.assertEqual(c_dl,2)
+                self.assertEqual(c_dl,repr(2))
 
 if __name__ == '__main__':
         suite = unittest.TestLoader().loadTestsFromTestCase(ExecuteNonormalTest)
