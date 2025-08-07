@@ -4,7 +4,6 @@ import sys
 import platform
 
 if sys.version_info.minor >= 6:
-    print('setuptools')
     from setuptools import setup, Extension    
 else:
     from distutils.core import setup, Extension

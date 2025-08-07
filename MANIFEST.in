@@ -1,5 +1,6 @@
 include VERSION
 include setup_3.py
+include MANIFEST.in
 include build_cci.sh
 include build_cci.bat
 include env_windows.bat
