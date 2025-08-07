@@ -7,7 +7,7 @@ if [ -f cci-src/cci/.libs/libcascci.a ];then
 fi
 
 cd cci-src
-# CMake 캐시 및 빌드 디렉토리 정리
+
 rm -rf build_x86_64_release
 mkdir -p build_x86_64_release
 

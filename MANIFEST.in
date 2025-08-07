@@ -10,3 +10,4 @@ include README_django_cubrid.md
 include _cubrid_exceptions.py
 recursive-include cubrid_ext *
 recursive-include cci-src *
+exclude cci-src/.git
