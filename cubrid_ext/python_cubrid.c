@@ -1,5 +1,6 @@
 #include "python_cubrid.h"
 #include <fcntl.h>
+#include "version.h"
 
 /* Loading dynamic library need this header. */
 #ifdef MS_WINDOWS
@@ -4112,7 +4113,6 @@ PyTypeObject _cubrid_CursorObject_type = {
   0,				/* tp_free */
 };
 
-#define _CUBRID_VERSION_	"11.0.0.0001"
 static char _cubrid_doc[] = "CUBRID API Module for Python";
 
 #if PY_MAJOR_VERSION >= 3

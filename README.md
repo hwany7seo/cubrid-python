@@ -30,8 +30,8 @@ Dependencies for CUBRIDdb
 -------------------------
 ```
   * CUBRID: 8.4.0 or higher
-  * OS    : Windows (x86 and x86_64)
-            Linux (32bit and 64bit)
+  * OS    : Windows (x86_64)
+            Linux (64bit)
             Other Unix and Unix-like os
   * Python: Python 2.6+
             Python 3.0 ~ Python 3.6

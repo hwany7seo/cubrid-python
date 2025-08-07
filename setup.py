@@ -2,6 +2,18 @@ import os
 import sys
 import subprocess
 
+print('Python version_info:', sys.version_info)
+
+if sys.version_info.major < 3:
+    import io
+
+if 'bdist_wheel' in sys.argv[1:]:
+    try:
+        import wheel
+    except ImportError:
+        print("wheel is not installed. Please install wheel to build the wheel.")
+        sys.exit(1)
+
 major_start_date='2017-06-27'
 
 if os.name == 'nt':
@@ -16,7 +28,7 @@ if os.name == 'nt':
     include_path = r"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt"
     os.environ['INCLUDE'] = include_path + os.pathsep + os.environ.get('INCLUDE', '')
 
-if sys.version > '3':
+if sys.version_info.major >= 3:
     setup_file = "setup_3.py"
 else:
     setup_file = "setup_2.py"
@@ -30,10 +42,25 @@ stdout, stderr = process.communicate()
 if process.returncode == 0:
     serial_number = stdout.decode().strip()
 
-python_version = version + "." + str(serial_number)
+driver_version = version + "." + str(serial_number)
+
+if str(serial_number) == '':
+    with open('cubrid_ext/version.h', 'r', encoding='utf-8') as file:
+        driver_version = file.read().split('"')[1]
+else:
+    if sys.version_info.major >= 3:
+        with open('cubrid_ext/version.h.template', 'r', encoding='utf-8') as file:
+            template_content = file.read()
+        with open('cubrid_ext/version.h', 'w', encoding='utf-8') as file:
+            file.write(template_content.replace('{{VERSION}}', driver_version))
+    else:
+        with io.open('cubrid_ext/version.h.template', 'r', encoding='utf-8') as file:
+            template_content = file.read()
+        with io.open('cubrid_ext/version.h', 'w', encoding='utf-8') as file:
+            file.write(template_content.replace('{{VERSION}}', driver_version))
 
 #os.system(setup_file)
 setup_fh = open(setup_file)
 setup_content = setup_fh.read()
 setup_fh.close()
-exec(setup_content, {'python_version':python_version, 'argv': sys.argv + ['arg1']})
+exec(setup_content, {'driver_version':driver_version, 'argv': sys.argv + ['arg1']})
