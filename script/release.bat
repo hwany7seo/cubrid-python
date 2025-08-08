@@ -73,7 +73,7 @@ if exist "%FIRST_VERSION_FILE%" (
 
 :build_env
 echo "Execute ENV Batch For Windows"
-call "%SHELL_DIR%\env_windows.bat"
+call "%SHELL_DIR%\..\env_windows.bat"
 
 :build
 rem Driver Build

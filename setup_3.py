@@ -2,6 +2,7 @@
 import os
 import sys
 import platform
+import subprocess
 
 if sys.version_info.minor >= 6:
     from setuptools import setup, Extension    
@@ -32,6 +33,11 @@ if platform.system() == 'Windows':
 
     if 'clean' in sys.argv[1:]:
         os.system("build_cci.bat clean")
+        os.system("del /s /q dist")
+        os.system("del /s /q build")
+        os.system("del /s /q cubrid_ext/version.h")
+        os.system("del /s /q CUBRID_Python.egg-info")
+        exit(0)
     elif platform.architecture()[0] == '32bit':
         arch_type = 'x86'
         os.system("build_cci.bat x86")
