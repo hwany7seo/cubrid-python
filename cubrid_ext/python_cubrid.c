@@ -718,9 +718,9 @@ _cubrid_ConnectionObject_server_version (_cubrid_ConnectionObject * self,
 
 static char _cubrid_ConnectionObject_client_version__doc__[] =
   "client_version()\n\
-This function returns a string that represents the client library version.\n\
+This function returns a string that represents the Python driver version.\n\
 \n\
-Return a string that represents the CUBRID client library\n\
+Return a string that represents the CUBRID Python driver version\n\
 \n\
 Example::\n\
   import _cubrid\n\
@@ -732,16 +732,13 @@ static PyObject *
 _cubrid_ConnectionObject_client_version (_cubrid_ConnectionObject * self,
 					 PyObject * args)
 {
-  char info[256];
-
   if (!PyArg_ParseTuple (args, ""))
     {
       return NULL;
     }
 
-  cci_get_version_string (info, sizeof (info));
-  // Remove the prefix "VERSION="
-  return _cubrid_return_PyString_FromString (info + 8);
+  // Return the Python driver version instead of CCI version
+  return _cubrid_return_PyString_FromString (_CUBRID_VERSION_);
 }
 
 static char _cubrid_ConnectionObject_set_autocommit__doc__[] =
