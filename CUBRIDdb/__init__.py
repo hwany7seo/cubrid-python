@@ -55,10 +55,10 @@ BLOB = DBAPISet([FIELD_TYPE.BLOB])
 CLOB = DBAPISet([FIELD_TYPE.CLOB])
 ROWID = DBAPISet()
 
-def Connect(*args, **kwargs):
+def connect(**kwargs):
     """Factory function for connections.Connection."""
     from CUBRIDdb.connections import Connection
-    return Connection(*args, **kwargs)
+    return Connection(**kwargs)
 
 connect = connection = Connect
 

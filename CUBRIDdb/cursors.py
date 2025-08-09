@@ -17,12 +17,15 @@ class BaseCursor(object):
     def __init__(self, conn):
         self.con = conn
         self._cs = conn.connection.cursor()
+        if self._cs is None:
+            raise InterfaceError("Bad connection, invalid cursor")
+
         self.arraysize = 1
         self.rowcount = -1
         self.description = None
 
         self.charset = conn.charset
-        self._cs._set_charset_name(conn.charset)
+        self._cs.set_charset(conn.charset)
 
     def __del__(self):
         try:

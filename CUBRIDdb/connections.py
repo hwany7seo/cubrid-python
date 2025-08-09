@@ -12,15 +12,25 @@ import _cubrid
 class Connection(object):
     """CUBRID Database Connection Object"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *,
+        dsn = "",
+        user = "dba",
+        password = "",
+        charset = "utf8",
+    ):
+        """
+        Create a connecton to the database.
+        Note:
+        The guideline for arguments can be found here:
+        https://peps.python.org/pep-0249/#id48
+        """
+        self.charset = charset
 
-        'Create a connecton to the database.'
-        self.charset = ''
-        kwargs2 = kwargs.copy()
-        self.charset = kwargs2.pop('charset', 'utf8')
-
-        self.connection = _cubrid.connect(*args, **kwargs2)
-        self.fetch_value_converter = None
+        self.connection = cubrid_connect(
+            url = dsn,
+            user = user,
+            passwd = password,
+        )
 
     def __del__(self):
         pass

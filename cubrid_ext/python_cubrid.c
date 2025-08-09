@@ -1526,11 +1526,11 @@ _cubrid_CursorObject_init (_cubrid_CursorObject * self, PyObject * args,
   return 0;
 }
 
-static char _cubrid_CursorObject__set_charset_name__doc__[] =
-  "Only used internally. This function should not be used by user.";
+static char _cubrid_CursorObject_set_charset__doc__[] =
+  "Set the charset name used by the cursor object. Default value is utf8.";
 
 static PyObject *
-_cubrid_CursorObject__set_charset_name (_cubrid_CursorObject * self,
+_cubrid_CursorObject_set_charset (_cubrid_CursorObject * self,
 					PyObject * args)
 {
   char *charset = NULL;
@@ -3936,10 +3936,10 @@ static PyMethodDef _cubrid_CursorObject_methods[] = {
    METH_VARARGS,
    _cubrid_CursorObject_prepare__doc__},
   {
-   "_set_charset_name",
-   (PyCFunction) _cubrid_CursorObject__set_charset_name,
+   "set_charset",
+   (PyCFunction) _cubrid_CursorObject_set_charset,
    METH_VARARGS,
-   _cubrid_CursorObject__set_charset_name__doc__},
+   _cubrid_CursorObject_set_charset__doc__},
   {
    "bind_param",
    (PyCFunction) _cubrid_CursorObject_bind_param,
