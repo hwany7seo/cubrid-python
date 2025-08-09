@@ -70,5 +70,5 @@ NotSupportedError = NotSupportedError
 __all__ = [ 'Connect', 'connection', 'connect', 'connections', 'DatabaseError', 
     'Error', 'InterfaceError', 'NotSupportedError', 'apilevel', 'Cursor', 
     'DictCursor', 'paramstyle', 'threadsafety', 'STRING', 'BINARY', 'NUMBER',
-    'DATE', 'TIME', 'TIMESTAMP', 'DATETIME', 'ROWID', 'SET', 'BLOB', 'CLOB'] 
+    'DATE', 'TIME', 'TIMESTAMP', 'DATETIME', 'FLOAT', 'ROWID', 'SET', 'BLOB', 'CLOB'] 
     

@@ -75,6 +75,19 @@ class Connection(object):
         """
         return self.connection.set()
 
+    def ping(self):
+        """
+        Checks whether or not the connection to the server is working.
+        """
+        return self.connection.ping()
+
+    def get_last_insert_id(self):
+        """
+        Value that has been most recently inserted to the AUTO_INCREMENT
+        column by a single INSERT statement.
+        """
+        return self.connection.insert_id()
+
     def close(self):
         """
         Close the connection now
@@ -88,8 +101,14 @@ class Connection(object):
         return self.connection.escape_string(buf)
 
     def server_version(self):
+        """
+        Returns a string that represents the CUBRID server version.
+        """
         return self.connection.server_version()
 
     def batch_execute(self, sql):
+        """
+        Executes more than one sql statement at the same time.
+        """
         return self.connection.batch_execute(sql)
 
