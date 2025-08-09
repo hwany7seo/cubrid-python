@@ -1,0 +1,1974 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="2" failures="67" skipped="2" tests="243" time="47.400" timestamp="2025-08-09T10:00:38.975073+09:00" hostname="LAPTOP-HWANY-LE"><testcase classname="tests3.test_bind" name="test_bind_int" time="0.195" /><testcase classname="tests3.test_bind" name="test_bind_bigint" time="0.195"><failure message="AssertionError: assert ['-9223372036...987654321012'] == [-92233720368...0987654321012]&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33m-9223372036854775808#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m-#x1B[94m9223372036854775808#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92409B640&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92409AB90&gt;)
+
+    def test_bind_bigint(cubrid_db_cursor):
+        numbers_bigint = [-9223372036854775808, +9223372036854775807, 567890987654321012]
+        inserted = _test_binding(cubrid_db_cursor[0], 'x bigint', numbers_bigint)
+&gt;       assert inserted == numbers_bigint
+E       AssertionError: assert ['-9223372036...987654321012'] == [-92233720368...0987654321012]
+E         
+E         At index 0 diff: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33m-9223372036854775808#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m-#x1B[94m9223372036854775808#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_bind.py:33: AssertionError</failure></testcase><testcase classname="tests3.test_bind" name="test_bind_float" time="0.175" /><testcase classname="tests3.test_bind" name="test_bind_numeric" time="0.163" /><testcase classname="tests3.test_bind" name="test_bind_str" time="0.200" /><testcase classname="tests3.test_bind" name="test_bind_date" time="0.279" /><testcase classname="tests3.test_bind" name="test_bind_time" time="0.304" /><testcase classname="tests3.test_bind" name="test_bind_timestamp" time="0.243" /><testcase classname="tests3.test_bind" name="test_bind_binary" time="0.119"><failure message="_cubrid.IntegrityError: (-494, 'ERROR: DBMS, -494, Semantic: Cannot coerce host var to type bit varying. [CAS INFO-192.168.2.32:33000,1,2781048].')">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924297430&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242971C0&gt;)
+
+    def test_bind_binary(cubrid_db_cursor):
+        samples_bin = ['0100', '01010101010101', '111111111', '1111100000010101010110111111']
+    
+        # Function to convert a binary string to bytes
+        def binary_str_to_bytes(binary_str):
+            # Convert to integer
+            integer_representation = int(binary_str, 2)
+    
+            # Convert integer to bytes
+            # Calculate the length of the bytes object needed
+            bytes_length = (len(binary_str) + 7) // 8  # Round up division
+            return integer_representation.to_bytes(bytes_length, 'big')
+    
+        samples_bytes = [binary_str_to_bytes(b) for b in samples_bin]
+    
+&gt;       inserted = _test_binding(cubrid_db_cursor[0], 'xbit BIT VARYING(256)', samples_bytes)
+
+test_bind.py:109: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_bind.py:14: in _test_binding
+    cur.executemany(f"insert into {table_name} values (?)",
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:137: in executemany
+    self.execute(query, *(p,))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924297430&gt;, query = 'insert into dbapi20test_bindings values (?)', args = (b'\x04',)
+set_type = None
+
+    def execute(self, query, args=None, set_type=None):
+        """
+        Execute a query.
+    
+        query -- string, query to execute on server
+        args -- optional sequence or mapping, parameters to use with query.
+    
+        Returns long integer rows affected, if any
+        """
+        self.__check_state()
+    
+        if not isinstance(query, (bytes, bytearray)):
+            stmt = query.encode(self.charset)
+        else:
+            stmt = query
+    
+        if sys.version_info &gt;= (3, 0):
+            stmt = stmt.decode()
+    
+        self._cs.prepare(stmt)
+    
+        if args is not None:
+            self._bind_params(args, set_type)
+    
+&gt;       r = self._cs.execute()
+E       _cubrid.IntegrityError: (-494, 'ERROR: DBMS, -494, Semantic: Cannot coerce host var to type bit varying. [CAS INFO-192.168.2.32:33000,1,2781048].')
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:115: IntegrityError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_cubrid_connection" time="0.058" /><testcase classname="tests3.test_cubrid" name="test_server_version" time="0.072" /><testcase classname="tests3.test_cubrid" name="test_client_version" time="0.062"><failure message="AssertionError: Version '11.2.0' does not match the expected format 'major.minor.release.build-commit_id'&#10;assert None&#10; +  where None = &lt;function match at 0x000001E921825AB0&gt;('^\\d+\\.\\d+\\.\\d+\\.\\d{4}-[a-fA-F0-9]+$', '11.2.0')&#10; +    where &lt;function match at 0x000001E921825AB0&gt; = re.match">cubrid_connection = &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;
+
+    def test_client_version(cubrid_connection):
+        # Assuming client_version() returns a version string or object from the database connection
+        version = cubrid_connection.client_version()
+        assert version is not None, "The client version should not be None"
+    
+        # Define a pattern to match the version format: major.minor.release.build-commit_id
+        # This pattern assumes the commit ID consists of alphanumeric characters (hexadecimal)
+        version_pattern = r'^\d+\.\d+\.\d+\.\d{4}-[a-fA-F0-9]+$'
+    
+        # Use re.match to check if the version matches the expected pattern
+&gt;       assert re.match(version_pattern, version), f"Version '{version}' does not match the "\
+            f"expected format 'major.minor.release.build-commit_id'"
+E       AssertionError: Version '11.2.0' does not match the expected format 'major.minor.release.build-commit_id'
+E       assert None
+E        +  where None = &lt;function match at 0x000001E921825AB0&gt;('^\\d+\\.\\d+\\.\\d+\\.\\d{4}-[a-fA-F0-9]+$', '11.2.0')
+E        +    where &lt;function match at 0x000001E921825AB0&gt; = re.match
+
+test_cubrid.py:153: AssertionError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_db_api_exceptions_hierarchy" time="0.001" /><testcase classname="tests3.test_cubrid" name="test_commit" time="0.057" /><testcase classname="tests3.test_cubrid" name="test_rollback" time="0.068" /><testcase classname="tests3.test_cubrid" name="test_cursor" time="0.071" /><testcase classname="tests3.test_cubrid" name="test_cursor_no_charset" time="0.194"><failure message="AssertionError: assert [['Blair'], ['Țărână'], ['흙']] == [('Blair',), ...nă',), ('흙',)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33mBlair#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33mBlair#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_connection = &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;
+
+    def test_cursor_no_charset(cubrid_connection):
+        cur = cubrid_connection.cursor()
+        try:
+            cur.prepare('drop table if exists test_cubrid')
+            cur.execute()
+            cur.prepare('create table if not exists test_cubrid (name varchar(20))')
+            cur.execute()
+            cur.prepare("insert into test_cubrid values ('Blair'), ('Țărână'), ('흙')")
+            cur.execute()
+            cur.prepare('select * from test_cubrid')
+            cur.execute()
+            results = _fetchall(cur)
+&gt;           assert results == [('Blair',), ('Țărână',), ('흙',)]
+E           AssertionError: assert [['Blair'], ['Țărână'], ['흙']] == [('Blair',), ...nă',), ('흙',)]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33mBlair#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33mBlair#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_cubrid.py:213: AssertionError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_cursor_isolation" time="0.169" /><testcase classname="tests3.test_cubrid" name="test_description" time="0.163" /><testcase classname="tests3.test_cubrid" name="test_rowcount" time="0.173" /><testcase classname="tests3.test_cubrid" name="test_isolation_level" time="0.075" /><testcase classname="tests3.test_cubrid" name="test_autocommit" time="0.059" /><testcase classname="tests3.test_cubrid" name="test_ping_connected" time="0.078" /><testcase classname="tests3.test_cubrid" name="test_schema_info" time="0.077" /><testcase classname="tests3.test_cubrid" name="test_insert_id" time="0.109" /><testcase classname="tests3.test_cubrid" name="test_affected_rows" time="0.108" /><testcase classname="tests3.test_cubrid" name="test_data_seek" time="0.144" /><testcase classname="tests3.test_cubrid" name="test_row_seek" time="0.122" /><testcase classname="tests3.test_cubrid" name="test_bind_int" time="0.178"><failure message="TypeError: argument 2 must be str or None, not int">cubrid_cursor = (&lt;_cubrid.cursor object at 242183f0&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_int(cubrid_cursor):
+        cursor, _ = cubrid_cursor
+        numbers = ['100', '200', '300', '400']
+        numbers_int = [int(x) for x in numbers]
+        inserted = _test_bind(cursor, 'id int', numbers)
+        assert inserted == numbers_int
+&gt;       inserted = _test_bind(cursor, 'id int', numbers_int)
+
+test_cubrid.py:438: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 242183f0&gt;, columns_sql = 'id int', samples = [100, 200, 300, 400], bind_type = None
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+&gt;               cursor.bind_param(i, sample)
+E               TypeError: argument 2 must be str or None, not int
+
+test_cubrid.py:73: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_bind_bigint" time="0.098"><failure message="TypeError: argument 2 must be str or None, not int">cubrid_cursor = (&lt;_cubrid.cursor object at 227739f0&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_bigint(cubrid_cursor):
+        cursor, _ = cubrid_cursor
+        numbers_bigint = [-9223372036854775808, +9223372036854775807, 567890987654321012]
+        bt_bigint = 21
+&gt;       inserted = _test_bind(cursor, 'id bigint', numbers_bigint, bt_bigint)
+
+test_cubrid.py:446: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 227739f0&gt;, columns_sql = 'id bigint'
+samples = [-9223372036854775808, 9223372036854775807, 567890987654321012], bind_type = 21
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+                cursor.bind_param(i, sample)
+            else:
+&gt;               cursor.bind_param(i, sample, bind_type)
+E               TypeError: argument 2 must be str or None, not int
+
+test_cubrid.py:75: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_bind_float" time="0.157"><failure message="TypeError: argument 2 must be str or None, not float">cubrid_cursor = (&lt;_cubrid.cursor object at 24218030&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_float(cubrid_cursor):
+        cursor, _ = cubrid_cursor
+        numbers = ['3.14']
+        numbers_float = [float(x) for x in numbers]
+        inserted = _test_bind(cursor, 'id float', numbers)
+        assert inserted == numbers_float
+&gt;       inserted = _test_bind(cursor, 'id float', numbers_float)
+
+test_cubrid.py:456: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 24218030&gt;, columns_sql = 'id float', samples = [3.14], bind_type = None
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+&gt;               cursor.bind_param(i, sample)
+E               TypeError: argument 2 must be str or None, not float
+
+test_cubrid.py:73: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_bind_date_e" time="0.107" /><testcase classname="tests3.test_cubrid" name="test_bind_date" time="0.161"><failure message="TypeError: argument 2 must be str or None, not datetime.date">cubrid_cursor = (&lt;_cubrid.cursor object at 24218ab0&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_date(cubrid_cursor):
+        cursor, _ = cubrid_cursor
+        dates = ["1987-10-29"]
+        dates_dt = [datetime.datetime.strptime(x, "%Y-%m-%d").date() for x in dates]
+        inserted = _test_bind(cursor, 'birthday date', dates)
+        assert inserted == dates_dt
+&gt;       inserted = _test_bind(cursor, 'birthday date', dates_dt)
+
+test_cubrid.py:477: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 24218ab0&gt;, columns_sql = 'birthday date', samples = [datetime.date(1987, 10, 29)], bind_type = None
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+&gt;               cursor.bind_param(i, sample)
+E               TypeError: argument 2 must be str or None, not datetime.date
+
+test_cubrid.py:73: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_bind_time" time="0.160"><failure message="TypeError: argument 2 must be str or None, not datetime.time">cubrid_cursor = (&lt;_cubrid.cursor object at 24218c30&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_time(cubrid_cursor):
+        cursor, _ = cubrid_cursor
+        times = ["11:30:29"]
+        times_dt = [datetime.datetime.strptime(x, "%H:%M:%S").time() for x in times]
+        inserted = _test_bind(cursor, 'lunch time', times)
+        assert inserted == times_dt
+&gt;       inserted = _test_bind(cursor, 'lunch time', times_dt)
+
+test_cubrid.py:487: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 24218c30&gt;, columns_sql = 'lunch time', samples = [datetime.time(11, 30, 29)], bind_type = None
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+&gt;               cursor.bind_param(i, sample)
+E               TypeError: argument 2 must be str or None, not datetime.time
+
+test_cubrid.py:73: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_bind_datetime" time="0.184"><failure message="TypeError: argument 2 must be str or None, not datetime.datetime">cubrid_cursor = (&lt;_cubrid.cursor object at 24218030&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_datetime(cubrid_cursor):
+        cursor, _ = cubrid_cursor
+        times = ["1987-10-29 11:30:29"]
+        times_dt = [datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S") for x in times]
+        inserted = _test_bind(cursor, 'xdt datetime', times)
+        assert inserted == times_dt
+&gt;       inserted = _test_bind(cursor, 'xdt datetime', times_dt)
+
+test_cubrid.py:497: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 24218030&gt;, columns_sql = 'xdt datetime', samples = [datetime.datetime(1987, 10, 29, 11, 30, 29)]
+bind_type = None
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+&gt;               cursor.bind_param(i, sample)
+E               TypeError: argument 2 must be str or None, not datetime.datetime
+
+test_cubrid.py:73: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_bind_timestamp" time="0.164"><failure message="TypeError: argument 2 must be str or None, not datetime.datetime">cubrid_cursor = (&lt;_cubrid.cursor object at 24218e70&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_timestamp(cubrid_cursor):
+        cursor, _ = cubrid_cursor
+        times = ["2011-5-3 11:30:29"]
+        times_dt = [datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S") for x in times]
+        inserted = _test_bind(cursor, 'lunch timestamp', times)
+        assert inserted == times_dt
+&gt;       inserted = _test_bind(cursor, 'lunch timestamp', times_dt)
+
+test_cubrid.py:507: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 24218e70&gt;, columns_sql = 'lunch timestamp', samples = [datetime.datetime(2011, 5, 3, 11, 30, 29)]
+bind_type = None
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+&gt;               cursor.bind_param(i, sample)
+E               TypeError: argument 2 must be str or None, not datetime.datetime
+
+test_cubrid.py:73: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_bind_datetime_now" time="0.161"><failure message="TypeError: argument 2 must be str or None, not datetime.datetime">cubrid_cursor = (&lt;_cubrid.cursor object at 24218c30&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_datetime_now(cubrid_cursor):
+        cursor, _ = cubrid_cursor
+        now = datetime.datetime.now()
+        formatted_now = now.strftime("%Y-%m-%d %H:%M:%S.%f")
+        inserted = _test_bind(cursor, 'now datetime', [formatted_now])
+        formatted_ins = inserted[0].strftime("%Y-%m-%d %H:%M:%S.%f")
+        assert formatted_now[:-3] == formatted_ins[:-3]
+&gt;       inserted = _test_bind(cursor, 'now datetime', [now])
+
+test_cubrid.py:518: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 24218c30&gt;, columns_sql = 'now datetime'
+samples = [datetime.datetime(2025, 8, 9, 10, 0, 44, 423781)], bind_type = None
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+&gt;               cursor.bind_param(i, sample)
+E               TypeError: argument 2 must be str or None, not datetime.datetime
+
+test_cubrid.py:73: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_bind_binary" time="0.096"><failure message="TypeError: argument 2 must be str or None, not bytes">cubrid_cursor = (&lt;_cubrid.cursor object at 24218ff0&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_bind_binary(cubrid_cursor):
+        cur, _ = cubrid_cursor
+        samples_bin = ['0B0100', '0B01010101010101', '0B111111111', '0B1111100000010101010110111111']
+    
+        # Function to convert a binary string to bytes
+        def binary_str_to_bytes(binary_str):
+            # Convert to integer
+            integer_representation = int(binary_str, 2)
+    
+            # Convert integer to bytes
+            # Calculate the length of the bytes object needed
+            bytes_length = (len(binary_str) + 7) // 8  # Round up division
+            return integer_representation.to_bytes(bytes_length, 'big')
+    
+        samples_bytes = [binary_str_to_bytes(x) for x in samples_bin]
+    
+        bt_char = 1
+        bt_varbit = 6
+&gt;       inserted = _test_bind(cur, 'id BIT VARYING(256)', samples_bytes, bt_varbit)
+
+test_cubrid.py:541: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_cubrid.py:416: in _test_bind
+    _create_table(cursor, columns_sql, samples, bind_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cursor = &lt;_cubrid.cursor object at 24218ff0&gt;, columns_sql = 'id BIT VARYING(256)'
+samples = [b'\x04', b'\x15U', b'\x01\xff', b'\x0f\x81U\xbf'], bind_type = 6
+
+    def _create_table(cursor, columns_sql, samples, bind_type = None):
+        # Create the test table using the cursor
+        cursor.prepare(f"create table if not exists test_cubrid ({columns_sql})")
+        cursor.execute()
+    
+        if not samples:
+            return
+    
+        # Insert sample data
+        placeholders = ','.join(['(?)'] * len(samples))
+        insert_query = f"insert into test_cubrid values {placeholders}"
+        cursor.prepare(insert_query)
+        for i, sample in enumerate(samples, start=1):
+            if bind_type is None:
+                cursor.bind_param(i, sample)
+            else:
+&gt;               cursor.bind_param(i, sample, bind_type)
+E               TypeError: argument 2 must be str or None, not bytes
+
+test_cubrid.py:75: TypeError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_row_to_tuple" time="0.077"><error message="failed on setup with &quot;TypeError: argument 2 must be str or None, not int&quot;">cubrid_cursor = (&lt;_cubrid.cursor object at 24219170&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    @pytest.fixture
+    def db_int_table(cubrid_cursor):
+        cursor, connection = cubrid_cursor
+    
+        _create_table(cursor, 'id integer auto_increment, val integer', [])
+    
+        cursor.prepare('insert into test_cubrid (val) values (?)')
+        for i in range(0, 10):
+&gt;           cursor.bind_param(1, i)
+E           TypeError: argument 2 must be str or None, not int
+
+test_cubrid.py:120: TypeError</error></testcase><testcase classname="tests3.test_cubrid" name="test_row_to_dict" time="0.077"><error message="failed on setup with &quot;TypeError: argument 2 must be str or None, not int&quot;">cubrid_cursor = (&lt;_cubrid.cursor object at 24218b70&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    @pytest.fixture
+    def db_int_table(cubrid_cursor):
+        cursor, connection = cubrid_cursor
+    
+        _create_table(cursor, 'id integer auto_increment, val integer', [])
+    
+        cursor.prepare('insert into test_cubrid (val) values (?)')
+        for i in range(0, 10):
+&gt;           cursor.bind_param(1, i)
+E           TypeError: argument 2 must be str or None, not int
+
+test_cubrid.py:120: TypeError</error></testcase><testcase classname="tests3.test_cubrid" name="test_collection" time="0.101"><failure message="_cubrid.IntegrityError: (-494, &quot;ERROR: DBMS, -494, Semantic: before '  values( {},{},{}),(null,null,null),( {1,1},{1,1},{1,1}),({1,...'\nThe number of attributes(2) and values(3) are not equal. insert into [public.test_cubrid] [public.test_cubrid] ([publ...[CAS INFO-192.168.2.32:33000,1,2781048].&quot;)">cubrid_cursor = (&lt;_cubrid.cursor object at 242190b0&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+db_collection_table = (&lt;_cubrid.cursor object at 242190b0&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_collection(cubrid_cursor, db_collection_table):
+        cur, _ = cubrid_cursor
+    
+        cur.prepare("insert into test_cubrid "
+            "values( {},{},{}),(null,null,null),( {1,1},{1,1},{1,1}),"
+            "({1,2,3},{1,2,3},{1,2,3}),( {-1,-2,-3},{-1,-2,-3},{-1,-2,-3})")
+&gt;       cur.execute()
+E       _cubrid.IntegrityError: (-494, "ERROR: DBMS, -494, Semantic: before '  values( {},{},{}),(null,null,null),( {1,1},{1,1},{1,1}),({1,...'\nThe number of attributes(2) and values(3) are not equal. insert into [public.test_cubrid] [public.test_cubrid] ([publ...[CAS INFO-192.168.2.32:33000,1,2781048].")
+
+test_cubrid.py:577: IntegrityError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_collection_2" time="0.127"><failure message="AssertionError: assert [[['1'], ['1'..., ['1', '1']]] == [({'1'}, ['1'..., ['1', '1'])]&#10;  &#10;  At index 0 diff: #x1B[0m[[#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m], [#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m], [#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]]#x1B[90m#x1B[39;49;00m != #x1B[0m({#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}, [#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m], [#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m])#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_cursor = (&lt;_cubrid.cursor object at 24219170&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+db_collection_table = (&lt;_cubrid.cursor object at 24219170&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_collection_2(cubrid_cursor, db_collection_table):
+        cur, _ = cubrid_cursor
+    
+        cur.prepare("insert into test_cubrid "
+            "values({},{},{}),(null,null,null),( {1,1},{1,1},{1,1})")
+        cur.execute()
+        cur.prepare("select * from test_cubrid where a seteq {'1'} order by 1,2")
+        cur.execute()
+    
+        rows = _fetchall(cur)
+&gt;       assert rows == [({'1'}, ['1', '1'], ['1', '1'])]
+E       AssertionError: assert [[['1'], ['1'..., ['1', '1']]] == [({'1'}, ['1'..., ['1', '1'])]
+E         
+E         At index 0 diff: #x1B[0m[[#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m], [#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m], [#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]]#x1B[90m#x1B[39;49;00m != #x1B[0m({#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m}, [#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m], [#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m])#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_cubrid.py:595: AssertionError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_lob_file" time="0.102"><failure message="_cubrid.InterfaceError: (-30009, 'ERROR: CLIENT, -30009, File open error')">cubrid_cursor = (&lt;_cubrid.cursor object at 242192f0&gt;, &lt;open CUBRID connection at CUBRID:test-db-server:33000:demodb::::public&gt;)
+
+    def test_lob_file(cubrid_cursor):
+        cur, con = cubrid_cursor
+    
+        fp1 = 'tests/cubrid_logo.png'
+        fp2 = 'tests/lob_out.png'
+    
+        try:
+            cur.prepare('create table test_cubrid (picture blob)')
+            cur.execute()
+    
+            cur.prepare('insert into test_cubrid values (?)')
+            lob = con.lob()
+&gt;           lob.imports(fp1)
+E           _cubrid.InterfaceError: (-30009, 'ERROR: CLIENT, -30009, File open error')
+
+test_cubrid.py:623: InterfaceError</failure></testcase><testcase classname="tests3.test_cubrid" name="test_lob_string" time="0.148" /><testcase classname="tests3.test_cubrid" name="test_result_info" time="0.153" /><testcase classname="tests3.test_dbapi_2_0" name="test_connect" time="0.060" /><testcase classname="tests3.test_dbapi_2_0" name="test_connect_empty_dsn" time="0.001"><failure message="TypeError: function missing required argument 'url' (pos 1)">def test_connect_empty_dsn():
+        with pytest.raises(CUBRIDdb.InterfaceError):
+&gt;           CUBRIDdb.connect(dsn = "")
+
+test_dbapi_2_0.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+C:\python\Python310\lib\site-packages\CUBRIDdb\__init__.py:61: in Connect
+    return Connection(*args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.connections.Connection object at 0x000001E92429A680&gt;, args = (), kwargs = {'dsn': ''}, kwargs2 = {'dsn': ''}
+
+    def __init__(self, *args, **kwargs):
+    
+        'Create a connecton to the database.'
+        self.charset = ''
+        kwargs2 = kwargs.copy()
+        self.charset = kwargs2.pop('charset', 'utf8')
+    
+&gt;       self.connection = _cubrid.connect(*args, **kwargs2)
+E       TypeError: function missing required argument 'url' (pos 1)
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\connections.py:22: TypeError</failure></testcase><testcase classname="tests3.test_dbapi_2_0" name="test_connect_no_dsn" time="0.001"><failure message="TypeError: function missing required argument 'url' (pos 1)">def test_connect_no_dsn():
+        with pytest.raises(CUBRIDdb.InterfaceError):
+&gt;           CUBRIDdb.connect()
+
+test_dbapi_2_0.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+C:\python\Python310\lib\site-packages\CUBRIDdb\__init__.py:61: in Connect
+    return Connection(*args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.connections.Connection object at 0x000001E924322740&gt;, args = (), kwargs = {}, kwargs2 = {}
+
+    def __init__(self, *args, **kwargs):
+    
+        'Create a connecton to the database.'
+        self.charset = ''
+        kwargs2 = kwargs.copy()
+        self.charset = kwargs2.pop('charset', 'utf8')
+    
+&gt;       self.connection = _cubrid.connect(*args, **kwargs2)
+E       TypeError: function missing required argument 'url' (pos 1)
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\connections.py:22: TypeError</failure></testcase><testcase classname="tests3.test_dbapi_2_0" name="test_apilevel" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_paramstyle" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_db_api_exceptions_hierarchy" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_escape_string" time="0.071" /><testcase classname="tests3.test_dbapi_2_0" name="test_invalid_sql_insert_raises_dberror" time="0.081" /><testcase classname="tests3.test_dbapi_2_0" name="test_invalid_sql_insert_raises_error" time="0.092" /><testcase classname="tests3.test_dbapi_2_0" name="test_commit" time="0.056" /><testcase classname="tests3.test_dbapi_2_0" name="test_rollback" time="0.056" /><testcase classname="tests3.test_dbapi_2_0" name="test_cursor" time="0.055" /><testcase classname="tests3.test_dbapi_2_0" name="test_cursor_isolation" time="0.133" /><testcase classname="tests3.test_dbapi_2_0" name="test_rowcount" time="0.180"><failure message="_cubrid.IntegrityError: (-494, &quot;ERROR: DBMS, -494, Semantic: before '  (name varchar(20))'\nClass dba.dbapi20test_barflys already exists. create class [dba.dbapi20test_barflys] ( [name] varchar(20) ...[CAS INFO-192.168.2.32:33000,1,2781048].&quot;)">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D98D0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D8D90&gt;)
+booze_table = 'dbapi20test_booze'
+
+    def test_rowcount(cubrid_db_cursor, booze_table):
+        cur, _ = cubrid_db_cursor
+    
+        assert cur.rowcount == -1, \
+            'cursor.rowcount should be -1 after executing no-result statements'
+    
+        cur.execute(f"insert into {booze_table} value ('Victoria Bitter')")
+        assert cur.rowcount in (-1, 1),\
+            'cursor.rowcount should == number or rows inserted, or '\
+            'set to -1 after executing an insert statment'
+    
+        cur.execute(f'select name from {booze_table}')
+        assert cur.rowcount in (-1, 1),\
+            'cursor.rowcount should == number or rows inserted, or '\
+            'set to -1 after executing an insert statment'
+    
+        table_name = f'{TABLE_PREFIX}barflys'
+        try:
+            # Make sure self.description gets reset
+&gt;           cur.execute(f'create table {table_name} (name varchar(20))')
+
+test_dbapi_2_0.py:195: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D98D0&gt;, query = 'create table dbapi20test_barflys (name varchar(20))'
+args = None, set_type = None
+
+    def execute(self, query, args=None, set_type=None):
+        """
+        Execute a query.
+    
+        query -- string, query to execute on server
+        args -- optional sequence or mapping, parameters to use with query.
+    
+        Returns long integer rows affected, if any
+        """
+        self.__check_state()
+    
+        if not isinstance(query, (bytes, bytearray)):
+            stmt = query.encode(self.charset)
+        else:
+            stmt = query
+    
+        if sys.version_info &gt;= (3, 0):
+            stmt = stmt.decode()
+    
+&gt;       self._cs.prepare(stmt)
+E       _cubrid.IntegrityError: (-494, "ERROR: DBMS, -494, Semantic: before '  (name varchar(20))'\nClass dba.dbapi20test_barflys already exists. create class [dba.dbapi20test_barflys] ( [name] varchar(20) ...[CAS INFO-192.168.2.32:33000,1,2781048].")
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:110: IntegrityError</failure></testcase><testcase classname="tests3.test_dbapi_2_0" name="test_close" time="0.057" /><testcase classname="tests3.test_dbapi_2_0" name="test_insert_utf8" time="0.142" /><testcase classname="tests3.test_dbapi_2_0" name="test_executemany" time="0.149" /><testcase classname="tests3.test_dbapi_2_0" name="test_autocommit" time="0.185" /><testcase classname="tests3.test_dbapi_2_0" name="test_datatype" time="0.146"><failure message="AssertionError: incorrect data type converted from CUBRID to Python (index 7 - &lt;class 'bytes'&gt;)&#10;assert False&#10; +  where False = isinstance('B380', &lt;class 'bytes'&gt;)">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9243042B0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9243047C0&gt;)
+datatype_table = 'dbapi20test_datatype'
+
+    def test_datatype(cubrid_db_cursor, datatype_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute(f"insert into {datatype_table} values "
+            "(2012, 2012.345, 20.12345, time'11:21:30 am',"
+            "date'2012-10-26', datetime'2012-10-26 11:21:30 am',"
+            "timestamp'11:21:30 am 2012-10-26',"
+            "B'101100111', 'TESTSTR', {'a', 'b', 'c'},"
+            "{'c', 'c', 'c', 'b', 'b', 'a'},"
+            '\'{"a": 1, "b": 2}\''
+            ")"
+        )
+    
+        cur.execute(f"select * from {datatype_table}")
+        row = cur.fetchone()
+    
+        datatypes = [int, float, decimal.Decimal, datetime.time,
+            datetime.date, datetime.datetime, datetime.datetime,
+            bytes, str, set, list, str,
+        ]
+    
+        for i, t in enumerate(datatypes):
+&gt;           assert isinstance(row[i], t),\
+                f'incorrect data type converted from CUBRID to Python (index {i} - {t})'
+E           AssertionError: incorrect data type converted from CUBRID to Python (index 7 - &lt;class 'bytes'&gt;)
+E           assert False
+E            +  where False = isinstance('B380', &lt;class 'bytes'&gt;)
+
+test_dbapi_2_0.py:289: AssertionError</failure></testcase><testcase classname="tests3.test_dbapi_2_0" name="test_mixdfetch" time="0.225" /><testcase classname="tests3.test_dbapi_2_0" name="test_threadsafety" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_binary" time="0.001"><failure message="AttributeError: module 'CUBRIDdb' has no attribute 'Binary'. Did you mean: 'BINARY'?">def test_binary():
+&gt;       CUBRIDdb.Binary([0x10, 0x20, 0x30])
+E       AttributeError: module 'CUBRIDdb' has no attribute 'Binary'. Did you mean: 'BINARY'?
+
+test_dbapi_2_0.py:324: AttributeError</failure></testcase><testcase classname="tests3.test_dbapi_2_0" name="test_date" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_time" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_timestamp" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_attr_string" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_attr_binary" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_attr_number" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_attr_datetime" time="0.001" /><testcase classname="tests3.test_dbapi_2_0" name="test_attr_rowid" time="0.001" /><testcase classname="tests3.test_description" name="test_description" time="0.152" /><testcase classname="tests3.test_description" name="test_description_int" time="0.126" /><testcase classname="tests3.test_description" name="test_description_short" time="0.127" /><testcase classname="tests3.test_description" name="test_description_numeric" time="0.125" /><testcase classname="tests3.test_description" name="test_description_float" time="0.125" /><testcase classname="tests3.test_description" name="test_description_double" time="0.126" /><testcase classname="tests3.test_description" name="test_description_monetary" time="0.127" /><testcase classname="tests3.test_description" name="test_description_date" time="0.125" /><testcase classname="tests3.test_description" name="test_description_time" time="0.129" /><testcase classname="tests3.test_description" name="test_description_datetime" time="0.125" /><testcase classname="tests3.test_description" name="test_description_timestamp" time="0.128" /><testcase classname="tests3.test_description" name="test_description_bit" time="0.151" /><testcase classname="tests3.test_description" name="test_description_varbit" time="0.123" /><testcase classname="tests3.test_description" name="test_description_char" time="0.129" /><testcase classname="tests3.test_description" name="test_description_varchar" time="0.126" /><testcase classname="tests3.test_description" name="test_description_string" time="0.122" /><testcase classname="tests3.test_description" name="test_description_set" time="0.150" /><testcase classname="tests3.test_description" name="test_description_multiset" time="0.124" /><testcase classname="tests3.test_description" name="test_description_sequence" time="0.126" /><testcase classname="tests3.test_enum" name="test_enum_01_insert" time="0.130" /><testcase classname="tests3.test_enum" name="test_enum_01_select_cast" time="0.141"><failure message="assert [[1, 1], [2, 2], [3, 3]] == [(1, 1), (2, 2), (3, 3)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924304AC0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924305690&gt;)
+enum_01_table = 'dbapi20test_enum01'
+
+    def test_enum_01_select_cast(cubrid_db_cursor, enum_01_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute("select cast(working_days as int), "
+            f"cast(answers as int) from {enum_01_table}")
+        rows = cur.fetchall()
+&gt;       assert rows == [(1, 1), (2, 2), (3, 3)]
+E       assert [[1, 1], [2, 2], [3, 3]] == [(1, 1), (2, 2), (3, 3)]
+E         
+E         At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_enum.py:17: AssertionError</failure></testcase><testcase classname="tests3.test_enum" name="test_enum_01_select" time="0.149"><failure message="AssertionError: assert '3' == 3">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242DB1F0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D8DF0&gt;)
+enum_01_table = 'dbapi20test_enum01'
+
+    def test_enum_01_select(cubrid_db_cursor, enum_01_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute(f"select count(*) from {enum_01_table}")
+        row = cur.fetchone()
+&gt;       assert row[0] == 3
+E       AssertionError: assert '3' == 3
+
+test_enum.py:25: AssertionError</failure></testcase><testcase classname="tests3.test_enum" name="test_enum_02_insert" time="0.146" /><testcase classname="tests3.test_enum" name="test_enum_02_select" time="0.144"><failure message="AssertionError: assert '1' == 1">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242971F0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924296740&gt;)
+enum_02_table = 'dbapi20test_enum01'
+
+    def test_enum_02_select(cubrid_db_cursor, enum_02_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute(f"select count(*) from {enum_02_table}")
+        row = cur.fetchone()
+&gt;       assert row[0] == 1
+E       AssertionError: assert '1' == 1
+
+test_enum.py:40: AssertionError</failure></testcase><testcase classname="tests3.test_enum" name="test_enum_03_insert" time="0.128" /><testcase classname="tests3.test_enum" name="test_enum_03_update" time="0.134" /><testcase classname="tests3.test_enum" name="test_enum_03_select" time="0.122"><failure message="AssertionError: assert '0' == 0">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92437C2E0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92437C610&gt;)
+enum_03_table = 'dbapi20test_enum01'
+
+    def test_enum_03_select(cubrid_db_cursor, enum_03_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute(f"select count(*) from {enum_03_table}")
+        row = cur.fetchone()
+&gt;       assert row[0] == 0
+E       AssertionError: assert '0' == 0
+
+test_enum.py:67: AssertionError</failure></testcase><testcase classname="tests3.test_enum" name="test_enum_04_update_1" time="0.152"><failure message="AssertionError: assert [['a', 'Yes']...b', 'Cancel']] == [('a', 'Yes')...b', 'Cancel')]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mYes#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mYes#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924294C10&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242943A0&gt;)
+enum_04_table = 'dbapi20test_enum01'
+
+    def test_enum_04_update_1(cubrid_db_cursor, enum_04_table):
+        cur, _ = cubrid_db_cursor
+    
+        rc = cur.execute(f"update {enum_04_table} set e1=cast(e2 as int) where e2 &lt; 3")
+        assert rc == 4
+    
+        cur.execute(f"select * from {enum_04_table}")
+        rows = cur.fetchall()
+&gt;       assert rows == [('a', 'Yes'), ('b', 'No'), ('a', 'Cancel'),
+                        ('a', 'Yes'), ('b', 'No'), ('b', 'Cancel')]
+E       AssertionError: assert [['a', 'Yes']...b', 'Cancel']] == [('a', 'Yes')...b', 'Cancel')]
+E         
+E         At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mYes#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mYes#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_enum.py:78: AssertionError</failure></testcase><testcase classname="tests3.test_enum" name="test_enum_04_update_2" time="0.155"><failure message="AssertionError: assert [['a', 'No'],...b', 'Cancel']] == [('a', 'No'),...b', 'Cancel')]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mNo#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mNo#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924212F50&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242133A0&gt;)
+enum_04_table = 'dbapi20test_enum01'
+
+    def test_enum_04_update_2(cubrid_db_cursor, enum_04_table):
+        cur, _ = cubrid_db_cursor
+    
+        rc = cur.execute(f"update {enum_04_table} set e2=e1 + 1")
+        assert rc == 6
+    
+        cur.execute(f"select * from {enum_04_table}")
+        rows = cur.fetchall()
+&gt;       assert rows == [('a', 'No'), ('a', 'No'), ('a', 'No'),
+                        ('b', 'Cancel'), ('b', 'Cancel'), ('b', 'Cancel')]
+E       AssertionError: assert [['a', 'No'],...b', 'Cancel']] == [('a', 'No'),...b', 'Cancel')]
+E         
+E         At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mNo#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mNo#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_enum.py:90: AssertionError</failure></testcase><testcase classname="tests3.test_enum" name="test_enum_04_update_3" time="0.151"><failure message="AssertionError: assert [['b', 'No'],..., ['b', 'No']] == [('b', 'No'),..., ('b', 'No')]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33mb#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mNo#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33mb#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mNo#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924320310&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924322980&gt;)
+enum_04_table = 'dbapi20test_enum01'
+
+    def test_enum_04_update_3(cubrid_db_cursor, enum_04_table):
+        cur, _ = cubrid_db_cursor
+    
+        rc = cur.execute(f"update {enum_04_table} set e1='b', e2='No'")
+        assert rc == 6
+    
+        cur.execute(f"select * from {enum_04_table}")
+        rows = cur.fetchall()
+&gt;       assert rows == [('b', 'No'), ('b', 'No'), ('b', 'No'),
+                        ('b', 'No'), ('b', 'No'), ('b', 'No')]
+E       AssertionError: assert [['b', 'No'],..., ['b', 'No']] == [('b', 'No'),..., ('b', 'No')]
+E         
+E         At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33mb#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mNo#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33mb#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mNo#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_enum.py:102: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_execute" time="0.172" /><testcase classname="tests3.test_execute" name="test_execute_select_version" time="0.077" /><testcase classname="tests3.test_execute" name="test_execute_insert" time="0.124" /><testcase classname="tests3.test_execute" name="test_execute_select" time="1.524"><failure message="AssertionError: assert '100' == 100">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924212920&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924213910&gt;)
+exc_table = 'dbapi20test_execute'
+
+    def test_execute_select(cubrid_db_cursor, exc_table):
+        cur, _ = cubrid_db_cursor
+        for n in range(100):
+            rc = cur.execute(f"insert into {exc_table}(a,b,c) values ({n} ,'foo_data', systimestamp)")
+            assert rc == 1
+    
+        cur.execute(f"select count(*) from {exc_table} where a &gt;= 0")
+        row = cur.fetchone()
+&gt;       assert row[0] == 100
+E       AssertionError: assert '100' == 100
+
+test_execute.py:61: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_execute_update" time="0.151" /><testcase classname="tests3.test_execute" name="test_execute_delete" time="0.155"><failure message="AssertionError: assert '4' == 4">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924092B30&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924091660&gt;)
+exc_table = 'dbapi20test_execute'
+
+    def test_execute_delete(cubrid_db_cursor, exc_table):
+        cur, _ = cubrid_db_cursor
+        rc = cur.execute(f"insert into {exc_table}(a) values (1),(2),(3),(4),(5)")
+        assert rc == 5
+    
+        rc = cur.execute(f"delete from {exc_table} where a = 1")
+        assert rc == 1
+    
+        cur.execute(f"select count(*) from {exc_table} where a &gt;= 0")
+        row = cur.fetchone()
+&gt;       assert row[0] == 4
+E       AssertionError: assert '4' == 4
+
+test_execute.py:87: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_execute_error_statement" time="0.073" /><testcase classname="tests3.test_execute" name="test_execute_empty_statement" time="0.065" /><testcase classname="tests3.test_execute" name="test_create_table_no_column" time="0.065" /><testcase classname="tests3.test_execute" name="test_select_from_empty_table" time="0.121" /><testcase classname="tests3.test_execute" name="test_select_wrong_param_count" time="0.123"><failure message="AssertionError: Regex pattern did not match.&#10; Regex: '-20009'&#10; Input: &quot;(-30014, 'ERROR: CLIENT, -30014, Some parameter not binded')&quot;">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242DB010&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D9C60&gt;)
+exc_issue_table = 'dbapi20test_execute_issue'
+
+    def test_select_wrong_param_count(cubrid_db_cursor, exc_issue_table):
+        cur, _ = cubrid_db_cursor
+        with pytest.raises(CUBRIDdb.InterfaceError, match = r'-20009'):
+&gt;           cur.execute(f"insert into {exc_issue_table} values()",(1,58,'aaaa'))
+
+test_execute.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:113: in execute
+    self._bind_params(args, set_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242DB010&gt;, args = ['1', 58, 'aaaa'], set_type = None
+
+    def _bind_params(self, args,set_type=None):
+        self.__check_state()
+        if type(args) not in (tuple, list):
+            args = [args,]
+        args = list(args)
+        for i in range(len(args)):
+            if args[i] is None:
+                pass
+            elif isinstance(args[i], bool):
+                if args[i] == True:
+                    args[i] = '1'
+                else:
+                    args[i] = '0'
+            elif isinstance(args[i], tuple):
+                 args[i] = args[i]
+            else:
+                # Python3.X dosen't support unicode keyword.
+                try:
+                    mytest = unicode
+                except NameError:
+                    if isinstance(args[i], str):
+                        pass
+                    elif isinstance(args[i], bytes):
+                        args[i] = args[i].decode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+                else:
+                    if isinstance(args[i], unicode):
+                        args[i] = args[i].encode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+    
+            if type(args[i]) != tuple:
+&gt;               self._cs.bind_param(i+1, args[i])
+E               _cubrid.InterfaceError: (-30014, 'ERROR: CLIENT, -30014, Some parameter not binded')
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:78: InterfaceError
+
+During handling of the above exception, another exception occurred:
+
+cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242DB010&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D9C60&gt;)
+exc_issue_table = 'dbapi20test_execute_issue'
+
+    def test_select_wrong_param_count(cubrid_db_cursor, exc_issue_table):
+        cur, _ = cubrid_db_cursor
+&gt;       with pytest.raises(CUBRIDdb.InterfaceError, match = r'-20009'):
+E       AssertionError: Regex pattern did not match.
+E        Regex: '-20009'
+E        Input: "(-30014, 'ERROR: CLIENT, -30014, Some parameter not binded')"
+
+test_execute.py:119: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_select_wrong_param_value" time="0.129" /><testcase classname="tests3.test_execute" name="test_index_select_single" time="0.280" /><testcase classname="tests3.test_execute" name="test_index_select_recompile" time="0.290"><failure message="AssertionError: assert '3' == 3">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924212B90&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924212200&gt;)
+exc_index_tables = ('dbapi20test_index_t', 'dbapi20test_index_u')
+
+    def test_index_select_recompile(cubrid_db_cursor, exc_index_tables):
+        cur, _ = cubrid_db_cursor
+        t, _ = exc_index_tables
+    
+        cur.execute(f"select /*+ recompile */ * from {t} use index (_t_id) where id &gt; 1;")
+        cur.fetchall()
+    
+        cur.execute(f"select /*+ recompile */ count(*) from {t} use index (_t_id) where id &gt; 1;")
+        row = cur.fetchone()
+&gt;       assert row[0] == 3
+E       AssertionError: assert '3' == 3
+
+test_execute.py:151: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_index_select_join" time="0.295"><failure message="AssertionError: assert '5' == 5">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D6440&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D44C0&gt;)
+exc_index_tables = ('dbapi20test_index_t', 'dbapi20test_index_u')
+
+    def test_index_select_join(cubrid_db_cursor, exc_index_tables):
+        cur, _ = cubrid_db_cursor
+        t, u = exc_index_tables
+    
+        cur.execute(f"select /*+ recompile */ * from {t} force index (_t_val) inner join {u} use "
+                    f"index (_u_id) on {t}.fk = {u}.id where right(text, 2) &lt; 'zz' and {u}.id &lt; 100")
+        cur.fetchall()
+    
+        cur.execute(f"select /*+ recompile */ count(*) from {t} force index (_t_val) inner join {u} "
+                    f"use index (_u_id) on {t}.fk = {u}.id where right(text, 2) &lt; 'zz' and "
+                    f"{u}.id &lt; 100")
+        row = cur.fetchone()
+&gt;       assert row[0] == 5
+E       AssertionError: assert '5' == 5
+
+test_execute.py:166: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_index_select_subselect" time="0.294"><failure message="AssertionError: assert '5' == 5">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924340D00&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924340760&gt;)
+exc_index_tables = ('dbapi20test_index_t', 'dbapi20test_index_u')
+
+    def test_index_select_subselect(cubrid_db_cursor, exc_index_tables):
+        cur, _ = cubrid_db_cursor
+        t, u = exc_index_tables
+    
+        cur.execute(f"select /*+ recompile */ * from {t} force index (_t_val) inner join (select * "
+                    f"from {u} force index (_u_id) where right(text, 2) &lt; 'zz') x on {t}.fk = x.id ")
+        cur.fetchall()
+    
+        cur.execute(f"select /*+ recompile */ count(*) from {t} force index (_t_val) inner join "
+                    f"(select * from {u} force index (_u_id) where right(text, 2) &lt; 'zz') x on "
+                    f"{t}.fk = x.id")
+        row = cur.fetchone()
+&gt;       assert row[0] == 5
+E       AssertionError: assert '5' == 5
+
+test_execute.py:181: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_index_update" time="0.310"><failure message="AssertionError: assert '3' == 3">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92431DA50&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92431E920&gt;)
+exc_index_tables = ('dbapi20test_index_t', 'dbapi20test_index_u')
+
+    def test_index_update(cubrid_db_cursor, exc_index_tables):
+        cur, _ = cubrid_db_cursor
+        t, _ = exc_index_tables
+    
+        rc = cur.execute(f"update {t} use index (_t_id, _t_val) set val = 1000 where id &lt;4")
+        assert rc == 3
+    
+        cur.execute(f"select * from {t}")
+        cur.fetchall()
+    
+        cur.execute(f"select count(*) from {t} where val=1000")
+        row = cur.fetchone()
+&gt;       assert row[0] == 3
+E       AssertionError: assert '3' == 3
+
+test_execute.py:196: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_index_delete" time="0.309" /><testcase classname="tests3.test_execute" name="test_partition_select_empty_table" time="0.123"><failure message="AssertionError: assert '0' == 0">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242960E0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924295DE0&gt;)
+exc_part_table = 'dbapi20test_partition'
+
+    def test_partition_select_empty_table(cubrid_db_cursor, exc_part_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute(f"select count(*) from {exc_part_table}")
+        row = cur.fetchone()
+&gt;       assert row[0] == 0
+E       AssertionError: assert '0' == 0
+
+test_execute.py:214: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_partition_alter" time="0.140" /><testcase classname="tests3.test_execute" name="test_partition_insert" time="0.178" /><testcase classname="tests3.test_execute" name="test_partition_select" time="0.212" /><testcase classname="tests3.test_execute" name="test_partition_delete" time="0.218"><failure message="AssertionError: assert '2' == 2">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92431EDA0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92431D030&gt;)
+exc_part_table = 'dbapi20test_partition'
+
+    def test_partition_delete(cubrid_db_cursor, exc_part_table):
+        cur, _ = cubrid_db_cursor
+    
+        rc = cur.execute(f"ALTER TABLE {exc_part_table} PARTITION BY LIST (test_char) "
+            "(PARTITION p0 VALUES IN ('aaa','bbb','ddd'),PARTITION p1 VALUES IN "
+            "('fff','ggg','hhh',NULL),PARTITION p2 VALUES IN ('kkk','lll','mmm') )")
+        assert rc == 0
+    
+        rc = cur.execute(f"insert into {exc_part_table} values(1,'aaa','aaa',B'1',B'1011',"
+            "N'aaa',N'aaa','aaaaaaaaaa','2006-03-01 09:00:00')")
+        assert rc == 1
+    
+        rc = cur.execute(f"insert into {exc_part_table} values(5,'ggg','ggg',B'101',B'1111',"
+            "N'ggg',N'ggg','gggggggggg','2006-03-01 09:00:00')")
+        assert rc == 1
+    
+        rc = cur.execute(f"insert into {exc_part_table} values(10, 'kkk',null,null,null,null,"
+            "null,null,'2007-01-01 09:00:00');")
+        assert rc == 1
+    
+        rc = cur.execute(f"delete from {exc_part_table} where id = 1")
+        assert rc == 1
+    
+        cur.execute(f"select count(*) from {exc_part_table} where id &gt;= 0")
+        row = cur.fetchone()
+&gt;       assert row[0] == 2
+E       AssertionError: assert '2' == 2
+
+test_execute.py:296: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_primary_insert" time="0.197" /><testcase classname="tests3.test_execute" name="test_primary_select" time="0.236" /><testcase classname="tests3.test_execute" name="test_primary_update" time="0.262" /><testcase classname="tests3.test_execute" name="test_primary_delete" time="0.231"><failure message="AssertionError: assert '4' == 4">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D7550&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D5F90&gt;)
+exc_primary_tables = ('dbapi20test_primary_table', 'dbapi20test_foreign_table')
+
+    def test_primary_delete(cubrid_db_cursor, exc_primary_tables):
+        cur, _ = cubrid_db_cursor
+        ptb, ftb = exc_primary_tables
+    
+        rc = cur.execute(f"delete from {ptb}  where id like '004%'")
+        assert rc == 1
+    
+        cur.execute(f"select count(*) from {ptb} ")
+        row = cur.fetchone()
+&gt;       assert row[0] == 4
+E       AssertionError: assert '4' == 4
+
+test_execute.py:348: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_rollback" time="0.182" /><testcase classname="tests3.test_execute" name="test_rollback_extra_argument_error" time="0.137" /><testcase classname="tests3.test_execute" name="test_select_calculate_subselect" time="0.150" /><testcase classname="tests3.test_execute" name="test_select_calculate" time="0.097"><failure message="AssertionError: assert '86400000' == 86400000">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92431F850&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92431E3B0&gt;)
+
+    def test_select_calculate(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute("SELECT 4 + '5.2'")
+        row = cur.fetchone()
+        assert row[0] == 9.1999999999999993
+    
+        cur.execute("select date'2001-02-03' - datetime'2001-02-02 12:00:00 am'")
+        row = cur.fetchone()
+&gt;       assert row[0] == 86400000
+E       AssertionError: assert '86400000' == 86400000
+
+test_execute.py:411: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_trigger" time="0.223"><failure message="AssertionError: assert [[1, '1']] == [(1, '1')]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D7130&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D7DC0&gt;)
+
+    def test_trigger(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+    
+        hi = f"{TABLE_PREFIX}hi"
+        tt1 = f"{TABLE_PREFIX}tt1"
+    
+        try:
+            _drop_table(cubrid_db_cursor, hi)
+            _drop_table(cubrid_db_cursor, tt1)
+            _create_table(cubrid_db_cursor, "hi", "a int , b string")
+            _create_table(cubrid_db_cursor, "tt1", "a int , b string")
+    
+            cur.execute(f"create trigger tt1_insert after insert on {tt1} execute "
+                f"insert into {hi}(a, b) values( obj.a ,to_char(obj.a))")
+    
+            cur.execute(f"insert into {tt1}(a,b) values(1, 'test')")
+            cur.execute(f"select * from {hi}")
+            rows = cur.fetchall()
+&gt;           assert rows == [(1, '1')]
+E           AssertionError: assert [[1, '1']] == [(1, '1')]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_execute.py:464: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_view_select" time="0.228"><failure message="AssertionError: assert 'select [dba....test_viewtbl]' == 'select [publ...test_viewtbl]'&#10;  &#10;  #x1B[0m#x1B[91m- select [public.dbapi20test_viewtbl].[qty], [public.dbapi20test_viewtbl].[price], [public.dbapi20test_viewtbl].[qty]*[public.dbapi20test_viewtbl].[price] from [public.dbapi20test_viewtbl] [public.dbapi20test_viewtbl]#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  ?         ^^ ^^^                              ^^ ^^^                                ^^ ^^^                             ^^ ^^^                                    ^^ ^^^                       ^^ ^^^#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ select [dba.dbapi20test_viewtbl].[qty], [dba.dbapi20test_viewtbl].[price], [dba.dbapi20test_viewtbl].[qt...&#10;  &#10;  ...Full output truncated (2 lines hidden), use '-vv' to show">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92431DF60&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92431CBB0&gt;)
+exc_view_v = 'dbapi20test_v', exc_view_table = 'dbapi20test_viewtbl'
+
+    def test_view_select(cubrid_db_cursor, exc_view_v, exc_view_table):
+        cur, _ = cubrid_db_cursor
+        vtb = exc_view_table
+    
+        cur.execute(f"select * from {exc_view_v}")
+        row = cur.fetchone()
+        assert row[2] == 150
+    
+        cur.execute(f"SHOW CREATE VIEW {exc_view_v}")
+        row = cur.fetchone()
+&gt;       assert row[1] == (f'select [public.{vtb}].[qty], [public.{vtb}].[price], '
+            f'[public.{vtb}].[qty]*[public.{vtb}].[price] from [public.{vtb}] [public.{vtb}]')
+E       AssertionError: assert 'select [dba....test_viewtbl]' == 'select [publ...test_viewtbl]'
+E         
+E         #x1B[0m#x1B[91m- select [public.dbapi20test_viewtbl].[qty], [public.dbapi20test_viewtbl].[price], [public.dbapi20test_viewtbl].[qty]*[public.dbapi20test_viewtbl].[price] from [public.dbapi20test_viewtbl] [public.dbapi20test_viewtbl]#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E         ?         ^^ ^^^                              ^^ ^^^                                ^^ ^^^                             ^^ ^^^                                    ^^ ^^^                       ^^ ^^^#x1B[90m#x1B[39;49;00m
+E         #x1B[92m+ select [dba.dbapi20test_viewtbl].[qty], [dba.dbapi20test_viewtbl].[price], [dba.dbapi20test_viewtbl].[qt...
+E         
+E         ...Full output truncated (2 lines hidden), use '-vv' to show
+
+test_execute.py:484: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_view_alter" time="0.199"><failure message="AssertionError: assert [[1, '111-111..., '222-2222']] == [(1, '111-111..., '222-2222')]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m111-1111#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m111-1111#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D5030&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D6AD0&gt;)
+exc_view_b = 'dbapi20test_b', exc_view_a_table = 'dbapi20test_view_py_a'
+
+    def test_view_alter(cubrid_db_cursor, exc_view_b, exc_view_a_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute(f"ALTER VIEW {exc_view_b} ADD QUERY "
+            f"SELECT * FROM {exc_view_a_table} WHERE id IN (1,2)")
+        cur.execute(f"select * from {exc_view_b}")
+        rows = cur.fetchall()
+&gt;       assert rows == [(1, '111-1111'), (2, '222-2222'), (3, '333-3333'),
+                        (1, '111-1111'), (2, '222-2222')]
+E       AssertionError: assert [[1, '111-111..., '222-2222']] == [(1, '111-111..., '222-2222')]
+E         
+E         At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m111-1111#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33m111-1111#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_execute.py:495: AssertionError</failure></testcase><testcase classname="tests3.test_execute" name="test_view_update" time="0.189" /><testcase classname="tests3.test_executemany" name="test_insert" time="0.150"><failure message="AssertionError: assert '2' == 2">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924211C00&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924211390&gt;)
+exc_many_table = 'dbapi20test_executemany'
+
+    def test_insert(cubrid_db_cursor, exc_many_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.executemany(f"insert into {exc_many_table} values(?,?)",
+            (('name1','category1'),('name2','category2')))
+    
+        cur.execute(f"select count(*) from {exc_many_table}")
+        row = cur.fetchone()
+&gt;       assert row[0] == 2
+E       AssertionError: assert '2' == 2
+
+test_executemany.py:15: AssertionError</failure></testcase><testcase classname="tests3.test_executemany" name="test_select" time="0.184"><failure message="AssertionError: assert [['racoon', 'mammal']] == [('racoon', 'mammal')]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33mracoon#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mmammal#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33mracoon#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mmammal#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92408C970&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92408DBD0&gt;)
+exc_many_table = 'dbapi20test_executemany'
+
+    def test_select(cubrid_db_cursor, exc_many_table):
+        cur, _ = cubrid_db_cursor
+    
+        rc = cur.execute(f"INSERT INTO {exc_many_table} (name, category) "
+            "VALUES('snake', 'reptile'),('frog', 'amphibian'),"
+            "('frog2', 'fish'),('racoon', 'mammal') ")
+        assert rc == 4
+    
+        cur.executemany(f"select * from {exc_many_table} where name like ?",
+            (('sn%'),('fr%'),('rac%')))
+        rows = cur.fetchall()
+&gt;       assert rows == [('racoon', 'mammal')]
+E       AssertionError: assert [['racoon', 'mammal']] == [('racoon', 'mammal')]
+E         
+E         At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33mracoon#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mmammal#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33mracoon#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mmammal#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_executemany.py:29: AssertionError</failure></testcase><testcase classname="tests3.test_executemany" name="test_update" time="0.162"><failure message="AssertionError: assert [['snake', 'u...n', 'mammal']] == [('snake', 'u...n', 'mammal')]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33msnake#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mupdate1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33msnake#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mupdate1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924211ED0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924212FE0&gt;)
+exc_many_table = 'dbapi20test_executemany'
+
+    def test_update(cubrid_db_cursor, exc_many_table):
+        cur, _ = cubrid_db_cursor
+    
+        rc = cur.execute(f"INSERT INTO {exc_many_table} (name, category) "
+            "VALUES('snake', 'reptile'),('frog', 'amphibian'),"
+            "('tuna', 'fish'),('racoon', 'mammal') ")
+        assert rc == 4
+    
+        cur.executemany(f" UPDATE {exc_many_table} SET category =? WHERE name =? ",
+            (('update1', 'snake'), ('update2','frog')))
+    
+        cur.execute(f"SELECT name, category FROM {exc_many_table}")
+        rows = cur.fetchall()
+&gt;       assert rows == [('snake', 'update1'), ('frog', 'update2'),
+                        ('tuna', 'fish'), ('racoon', 'mammal')]
+E       AssertionError: assert [['snake', 'u...n', 'mammal']] == [('snake', 'u...n', 'mammal')]
+E         
+E         At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33msnake#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mupdate1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33msnake#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mupdate1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_executemany.py:45: AssertionError</failure></testcase><testcase classname="tests3.test_executemany" name="test_delete" time="0.174"><failure message="AssertionError: assert [['tuna', 'fi... 'category2']] == [('tuna', 'fi... 'category2')]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33mtuna#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mfish#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33mtuna#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mfish#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924098D90&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92434E200&gt;)
+exc_many_table = 'dbapi20test_executemany'
+
+    def test_delete(cubrid_db_cursor, exc_many_table):
+        cur, _ = cubrid_db_cursor
+    
+        rc = cur.execute(f"INSERT INTO {exc_many_table} (name, category) "
+            "VALUES('snake', 'reptile'),('frog', 'amphibian'),('tuna', 'fish'),"
+            "('racoon', 'mammal') ,('name1','category1'),('name2','category2')")
+        assert rc == 6
+    
+        cur.executemany(f"delete from {exc_many_table} where name like ?",
+            (('sna%'),('fro%')))
+    
+        cur.execute(f"select * from {exc_many_table}")
+        rows = cur.fetchall()
+&gt;       assert rows == [('tuna', 'fish'), ('racoon', 'mammal'),
+                        ('name1', 'category1'), ('name2', 'category2')]
+E       AssertionError: assert [['tuna', 'fi... 'category2']] == [('tuna', 'fi... 'category2')]
+E         
+E         At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33mtuna#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mfish#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33mtuna#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mfish#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_executemany.py:62: AssertionError</failure></testcase><testcase classname="tests3.test_executemany" name="test_primary_insert_select" time="0.256"><failure message="AssertionError: assert '6' == 6">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924341660&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924342B00&gt;)
+exc_primary_tables = ('dbapi20test_primary_table', 'dbapi20test_foreign_table')
+
+    def test_primary_insert_select(cubrid_db_cursor, exc_primary_tables):
+        cur, _ = cubrid_db_cursor
+        ptb, ftb = exc_primary_tables
+    
+        cur.execute(f"select * from {ptb}")
+        rows = [(row[0].strip(), row[1], row[2]) for row in cur.fetchall()]
+        assert rows == [('001', 'aaaa', 'aaaa'), ('002', 'bbbb', 'bbbb'), ('003', 'cccc', 'cccc'),
+                        ('004', 'dddd', 'dddd'), ('005', 'eeee', 'eeee')]
+    
+        cur.execute(f"select count(*) from {ftb}")
+        row = cur.fetchone()
+&gt;       assert row[0] == 6
+E       AssertionError: assert '6' == 6
+
+test_executemany.py:77: AssertionError</failure></testcase><testcase classname="tests3.test_executemany" name="test_primary_update" time="0.304" /><testcase classname="tests3.test_executemany" name="test_primary_delete" time="0.294" /><testcase classname="tests3.test_fetchall" name="test_fetchall_error_no_rows" time="0.103"><skipped type="pytest.xfail" message="CCI does not return error when fetchall cannot return rows" /></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_error_no_query" time="0.056" /><testcase classname="tests3.test_fetchall" name="test_fetchall" time="0.203" /><testcase classname="tests3.test_fetchall" name="test_fetchall_empty_table" time="0.253" /><testcase classname="tests3.test_fetchall" name="test_fetchall_int" time="0.189"><failure message="assert [[1], [0], [-...[-2147483648]] == [(1,), (0,), ...-2147483648,)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D6C80&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D7E80&gt;)
+
+    def test_fetchall_int(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in [1,0,-1,2147483647,-2147483648]]
+&gt;       _test_fetchall_datatype(cur, 'c_int int', rows)
+
+test_fetchall.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D6C80&gt;, columns_sql = 'c_int int'
+rows = [(1,), (0,), (-1,), (2147483647,), (-2147483648,)], expected_rows = [(1,), (0,), (-1,), (2147483647,), (-2147483648,)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           assert [[1], [0], [-...[-2147483648]] == [(1,), (0,), ...-2147483648,)]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_short" time="0.187"><failure message="assert [[1], [0], [-...67], [-32768]] == [(1,), (0,), ...,), (-32768,)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924C03340&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924C03400&gt;)
+
+    def test_fetchall_short(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in [1,0,-1,32767,-32768]]
+&gt;       _test_fetchall_datatype(cur, 'c_int short', rows)
+
+test_fetchall.py:100: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924C03340&gt;, columns_sql = 'c_int short'
+rows = [(1,), (0,), (-1,), (32767,), (-32768,)], expected_rows = [(1,), (0,), (-1,), (32767,), (-32768,)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           assert [[1], [0], [-...67], [-32768]] == [(1,), (0,), ...,), (-32768,)]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[94m1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_numeric" time="0.188"><failure message="AssertionError: assert [[Decimal('12...l('-0.1235')]] == [(Decimal('12...('-0.1235'),)]&#10;  &#10;  At index 0 diff: #x1B[0m[Decimal(#x1B[33m'#x1B[39;49;00m#x1B[33m12345.6789#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(Decimal(#x1B[33m'#x1B[39;49;00m#x1B[33m12345.6789#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m),)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D76A0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9242D63E0&gt;)
+
+    def test_fetchall_numeric(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(decimal.Decimal(x),) for x in ['12345.6789','0.12345678','-0.123456789']]
+        expected_rows = [(decimal.Decimal(x),) for x in ['12345.6789','0.1235','-0.1235']]
+&gt;       _test_fetchall_datatype(cur, 'c_num numeric(10,4)', rows, expected_rows)
+
+test_fetchall.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E9242D76A0&gt;, columns_sql = 'c_num numeric(10,4)'
+rows = [(Decimal('12345.6789'),), (Decimal('0.12345678'),), (Decimal('-0.123456789'),)]
+expected_rows = [(Decimal('12345.6789'),), (Decimal('0.1235'),), (Decimal('-0.1235'),)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           AssertionError: assert [[Decimal('12...l('-0.1235')]] == [(Decimal('12...('-0.1235'),)]
+E             
+E             At index 0 diff: #x1B[0m[Decimal(#x1B[33m'#x1B[39;49;00m#x1B[33m12345.6789#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(Decimal(#x1B[33m'#x1B[39;49;00m#x1B[33m12345.6789#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m),)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_float" time="0.163"><failure message="assert [[1.1], [0.0], [-1.1]] == [(1.1,), (0.0,), (-1.1,)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[94m1.1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1.1#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924C02E60&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924C02F20&gt;)
+
+    def test_fetchall_float(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in [1.1,0.0,-1.1]]
+&gt;       _test_fetchall_datatype(cur, 'c_float float', rows)
+
+test_fetchall.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924C02E60&gt;, columns_sql = 'c_float float', rows = [(1.1,), (0.0,), (-1.1,)]
+expected_rows = [(1.1,), (0.0,), (-1.1,)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           assert [[1.1], [0.0], [-1.1]] == [(1.1,), (0.0,), (-1.1,)]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[94m1.1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1.1#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_double" time="0.165"><failure message="assert [[1.1], [0.0], [-1.1]] == [(1.1,), (0.0,), (-1.1,)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[94m1.1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1.1#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924342EF0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924340070&gt;)
+
+    def test_fetchall_double(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in [1.1,0.0,-1.1]]
+&gt;       _test_fetchall_datatype(cur, 'c_double double', rows)
+
+test_fetchall.py:119: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924342EF0&gt;, columns_sql = 'c_double double', rows = [(1.1,), (0.0,), (-1.1,)]
+expected_rows = [(1.1,), (0.0,), (-1.1,)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           assert [[1.1], [0.0], [-1.1]] == [(1.1,), (0.0,), (-1.1,)]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[94m1.1#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1.1#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_char" time="0.164"><failure message="AssertionError: assert [['a   '], ['abcd'], ['zzz ']] == [('a   ',), (...,), ('zzz ',)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma   #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma   #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92434D930&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92434C1F0&gt;)
+
+    def test_fetchall_char(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in ['a','abcd','zzz']]
+        expected_rows = [(x,) for x in ['a   ','abcd','zzz ']]
+&gt;       _test_fetchall_datatype(cur, 'c_char char(4)', rows, expected_rows)
+
+test_fetchall.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E92434D930&gt;, columns_sql = 'c_char char(4)', rows = [('a',), ('abcd',), ('zzz',)]
+expected_rows = [('a   ',), ('abcd',), ('zzz ',)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           AssertionError: assert [['a   '], ['abcd'], ['zzz ']] == [('a   ',), (...,), ('zzz ',)]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma   #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma   #x1B[39;49;00m#x1B[33m'#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_varchar" time="0.172"><failure message="AssertionError: assert [['a'], ['abcd'], ['abc']] == [('a',), ('abcd',), ('abc',)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9243408E0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924342530&gt;)
+
+    def test_fetchall_varchar(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in ['a','abcd','abc']]
+&gt;       _test_fetchall_datatype(cur, 'c_varchar varchar(4)', rows)
+
+test_fetchall.py:132: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E9243408E0&gt;, columns_sql = 'c_varchar varchar(4)'
+rows = [('a',), ('abcd',), ('abc',)], expected_rows = [('a',), ('abcd',), ('abc',)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           AssertionError: assert [['a'], ['abcd'], ['abc']] == [('a',), ('abcd',), ('abc',)]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_string" time="0.173"><failure message="AssertionError: assert [['a'], ['abc... ['abcdefgh']] == [('a',), ('ab...('abcdefgh',)]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92408C190&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92408D6C0&gt;)
+
+    def test_fetchall_string(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in ['a','abcd','abcdefgh']]
+&gt;       _test_fetchall_datatype(cur, 'c_string string', rows)
+
+test_fetchall.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E92408C190&gt;, columns_sql = 'c_string string'
+rows = [('a',), ('abcd',), ('abcdefgh',)], expected_rows = [('a',), ('abcd',), ('abcdefgh',)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           AssertionError: assert [['a'], ['abc... ['abcdefgh']] == [('a',), ('ab...('abcdefgh',)]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[33m'#x1B[39;49;00m#x1B[33ma#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m,)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_date" time="0.167"><failure message="assert [[datetime.da...999, 12, 31)]] == [(datetime.da...99, 12, 31),)]&#10;  &#10;  At index 0 diff: #x1B[0m[datetime.date(#x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(datetime.date(#x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m),)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924342FE0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9243409D0&gt;)
+
+    def test_fetchall_date(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in [datetime.date.min, datetime.date.today(), datetime.date.max]]
+&gt;       _test_fetchall_datatype(cur, 'c_date date', rows)
+
+test_fetchall.py:144: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924342FE0&gt;, columns_sql = 'c_date date'
+rows = [(datetime.date(1, 1, 1),), (datetime.date(2025, 8, 9),), (datetime.date(9999, 12, 31),)]
+expected_rows = [(datetime.date(1, 1, 1),), (datetime.date(2025, 8, 9),), (datetime.date(9999, 12, 31),)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           assert [[datetime.da...999, 12, 31)]] == [(datetime.da...99, 12, 31),)]
+E             
+E             At index 0 diff: #x1B[0m[datetime.date(#x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(datetime.date(#x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m),)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_time" time="0.162"><failure message="assert [[datetime.ti...(23, 59, 59)]] == [(datetime.ti...23, 59, 59),)]&#10;  &#10;  At index 0 diff: #x1B[0m[datetime.time(#x1B[94m0#x1B[39;49;00m, #x1B[94m0#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(datetime.time(#x1B[94m0#x1B[39;49;00m, #x1B[94m0#x1B[39;49;00m),)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924212620&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924213E80&gt;)
+
+    def test_fetchall_time(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(t,) for t in [datetime.time.min, datetime.time.max]]
+        expected_rows = [(datetime.time(t.hour, t.minute, t.second),)
+                         for t in [datetime.time.min, datetime.time.max]]
+&gt;       _test_fetchall_datatype(cur, 'c_time time', rows, expected_rows)
+
+test_fetchall.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924212620&gt;, columns_sql = 'c_time time'
+rows = [(datetime.time(0, 0),), (datetime.time(23, 59, 59, 999999),)]
+expected_rows = [(datetime.time(0, 0),), (datetime.time(23, 59, 59),)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           assert [[datetime.ti...(23, 59, 59)]] == [(datetime.ti...23, 59, 59),)]
+E             
+E             At index 0 diff: #x1B[0m[datetime.time(#x1B[94m0#x1B[39;49;00m, #x1B[94m0#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(datetime.time(#x1B[94m0#x1B[39;49;00m, #x1B[94m0#x1B[39;49;00m),)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_datetime" time="0.153"><failure message="assert [[datetime.da... 59, 999000)]] == [(datetime.da...59, 999000),)]&#10;  &#10;  At index 0 diff: #x1B[0m[datetime.datetime(#x1B[94m2025#x1B[39;49;00m, #x1B[94m8#x1B[39;49;00m, #x1B[94m9#x1B[39;49;00m, #x1B[94m10#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m, #x1B[94m3#x1B[39;49;00m, #x1B[94m576000#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(datetime.datetime(#x1B[94m2025#x1B[39;49;00m, #x1B[94m8#x1B[39;49;00m, #x1B[94m9#x1B[39;49;00m, #x1B[94m10#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m, #x1B[94m3#x1B[39;49;00m, #x1B[94m576000#x1B[39;49;00m),)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924210D30&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924212500&gt;)
+
+    def test_fetchall_datetime(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(t,) for t in [datetime.datetime.now(), datetime.datetime.max]]
+        expected_rows = [(datetime.datetime(t.year, t.month, t.day,
+            t.hour, t.minute, t.second, t.microsecond // 1000 * 1000),)
+            for t in [datetime.datetime.now(), datetime.datetime.max]]
+&gt;       _test_fetchall_datatype(cur, 'c_datetime datetime', rows, expected_rows)
+
+test_fetchall.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924210D30&gt;, columns_sql = 'c_datetime datetime'
+rows = [(datetime.datetime(2025, 8, 9, 10, 1, 3, 576929),), (datetime.datetime(9999, 12, 31, 23, 59, 59, 999999),)]
+expected_rows = [(datetime.datetime(2025, 8, 9, 10, 1, 3, 576000),), (datetime.datetime(9999, 12, 31, 23, 59, 59, 999000),)]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           assert [[datetime.da... 59, 999000)]] == [(datetime.da...59, 999000),)]
+E             
+E             At index 0 diff: #x1B[0m[datetime.datetime(#x1B[94m2025#x1B[39;49;00m, #x1B[94m8#x1B[39;49;00m, #x1B[94m9#x1B[39;49;00m, #x1B[94m10#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m, #x1B[94m3#x1B[39;49;00m, #x1B[94m576000#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(datetime.datetime(#x1B[94m2025#x1B[39;49;00m, #x1B[94m8#x1B[39;49;00m, #x1B[94m9#x1B[39;49;00m, #x1B[94m10#x1B[39;49;00m, #x1B[94m1#x1B[39;49;00m, #x1B[94m3#x1B[39;49;00m, #x1B[94m576000#x1B[39;49;00m),)#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_bit" time="0.116"><failure message="_cubrid.IntegrityError: (-494, 'ERROR: DBMS, -494, Semantic: Cannot coerce host var to type bit. [CAS INFO-192.168.2.32:33000,1,2781048].')">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924307BB0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924305F60&gt;)
+
+    def test_fetchall_bit(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in [b'\xde\xad', b'\xbe\xaf', b'\x55']]
+        expected_rows = [(x,) for x in [b'\xde\xad', b'\xbe\xaf', b'\x55\x00']]
+&gt;       _test_fetchall_datatype(cur, 'c_bit bit(16)', rows, expected_rows)
+
+test_fetchall.py:168: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_fetchall.py:80: in _test_fetchall_datatype
+    cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:137: in executemany
+    self.execute(query, *(p,))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924307BB0&gt;, query = 'insert into dbapi20test_fetchall values (?)'
+args = (b'\xde\xad',), set_type = None
+
+    def execute(self, query, args=None, set_type=None):
+        """
+        Execute a query.
+    
+        query -- string, query to execute on server
+        args -- optional sequence or mapping, parameters to use with query.
+    
+        Returns long integer rows affected, if any
+        """
+        self.__check_state()
+    
+        if not isinstance(query, (bytes, bytearray)):
+            stmt = query.encode(self.charset)
+        else:
+            stmt = query
+    
+        if sys.version_info &gt;= (3, 0):
+            stmt = stmt.decode()
+    
+        self._cs.prepare(stmt)
+    
+        if args is not None:
+            self._bind_params(args, set_type)
+    
+&gt;       r = self._cs.execute()
+E       _cubrid.IntegrityError: (-494, 'ERROR: DBMS, -494, Semantic: Cannot coerce host var to type bit. [CAS INFO-192.168.2.32:33000,1,2781048].')
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:115: IntegrityError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_varbit" time="0.121"><failure message="UnicodeDecodeError: 'utf-8' codec can't decode byte 0xbe in position 2: invalid start byte">self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924342F50&gt;, args = [b'\xde\xad\xbe\xef'], set_type = None
+
+    def _bind_params(self, args,set_type=None):
+        self.__check_state()
+        if type(args) not in (tuple, list):
+            args = [args,]
+        args = list(args)
+        for i in range(len(args)):
+            if args[i] is None:
+                pass
+            elif isinstance(args[i], bool):
+                if args[i] == True:
+                    args[i] = '1'
+                else:
+                    args[i] = '0'
+            elif isinstance(args[i], tuple):
+                 args[i] = args[i]
+            else:
+                # Python3.X dosen't support unicode keyword.
+                try:
+&gt;                   mytest = unicode
+E                   NameError: name 'unicode' is not defined
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:63: NameError
+
+During handling of the above exception, another exception occurred:
+
+cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924342F50&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924340910&gt;)
+
+    def test_fetchall_varbit(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [(x,) for x in [b'\xde\xad\xbe\xef', b'\xbe\xaf', b'\x55']]
+&gt;       _test_fetchall_datatype(cur, 'c_varbit bit varying', rows)
+
+test_fetchall.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_fetchall.py:80: in _test_fetchall_datatype
+    cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:137: in executemany
+    self.execute(query, *(p,))
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:113: in execute
+    self._bind_params(args, set_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924342F50&gt;, args = [b'\xde\xad\xbe\xef'], set_type = None
+
+    def _bind_params(self, args,set_type=None):
+        self.__check_state()
+        if type(args) not in (tuple, list):
+            args = [args,]
+        args = list(args)
+        for i in range(len(args)):
+            if args[i] is None:
+                pass
+            elif isinstance(args[i], bool):
+                if args[i] == True:
+                    args[i] = '1'
+                else:
+                    args[i] = '0'
+            elif isinstance(args[i], tuple):
+                 args[i] = args[i]
+            else:
+                # Python3.X dosen't support unicode keyword.
+                try:
+                    mytest = unicode
+                except NameError:
+                    if isinstance(args[i], str):
+                        pass
+                    elif isinstance(args[i], bytes):
+&gt;                       args[i] = args[i].decode(self.charset)
+E                       UnicodeDecodeError: 'utf-8' codec can't decode byte 0xbe in position 2: invalid start byte
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:68: UnicodeDecodeError</failure></testcase><testcase classname="tests3.test_fetchall" name="test_fetchall_multiple_columns" time="0.182"><failure message="AssertionError: assert [[1400, 0.987...(2025, 8, 9)]] == [(1400, 0.987...(2025, 8, 9))]&#10;  &#10;  At index 0 diff: #x1B[0m[#x1B[94m1400#x1B[39;49;00m, #x1B[94m0.987654321#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mana has apples#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, datetime.date(#x1B[94m2025#x1B[39;49;00m, #x1B[94m8#x1B[39;49;00m, #x1B[94m9#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1400#x1B[39;49;00m, #x1B[94m0.987654321#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mana has apples#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, datetime.date(#x1B[94m2025#x1B[39;49;00m, #x1B[94m8#x1B[39;49;00m, #x1B[94m9#x1B[39;49;00m))#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924297A60&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924297100&gt;)
+
+    def test_fetchall_multiple_columns(cubrid_db_cursor):
+        cur, _ = cubrid_db_cursor
+        rows = [
+            (1400, 0.987654321, "ana has apples", datetime.date.today()),
+            (1500, 1.987654321, "bonny has oranges", datetime.date.today()),
+            (1600, 2.987654321, "chris has bananas", datetime.date.today()),
+            (2000, 3.987654321, "dora has pies", datetime.date.today()),
+        ]
+&gt;       _test_fetchall_datatype(cur, 'c_int int, c_double double, c_varchar varchar, c_date date', rows)
+
+test_fetchall.py:185: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cur = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924297A60&gt;
+columns_sql = 'c_int int, c_double double, c_varchar varchar, c_date date'
+rows = [(1400, 0.987654321, 'ana has apples', datetime.date(2025, 8, 9)), (1500, 1.987654321, 'bonny has oranges', datetime.d...4321, 'chris has bananas', datetime.date(2025, 8, 9)), (2000, 3.987654321, 'dora has pies', datetime.date(2025, 8, 9))]
+expected_rows = [(1400, 0.987654321, 'ana has apples', datetime.date(2025, 8, 9)), (1500, 1.987654321, 'bonny has oranges', datetime.d...4321, 'chris has bananas', datetime.date(2025, 8, 9)), (2000, 3.987654321, 'dora has pies', datetime.date(2025, 8, 9))]
+
+    def _test_fetchall_datatype(cur, columns_sql, rows, expected_rows = None):
+        table_name = f'{TABLE_PREFIX}fetchall'
+        placeholders = ','.join(['?'] * len(rows[0]))
+        cur.execute(f'drop table if exists {table_name}')
+        try:
+            cur.execute(f"create table if not exists {table_name} ({columns_sql})")
+            cur.executemany(f"insert into {table_name} values ({placeholders})", rows)
+            assert cur.rowcount == 1
+    
+            cur.execute(f"select * from {table_name}")
+            fetched_rows = cur.fetchall()
+            expected_rows = expected_rows or rows
+&gt;           assert fetched_rows == expected_rows
+E           AssertionError: assert [[1400, 0.987...(2025, 8, 9)]] == [(1400, 0.987...(2025, 8, 9))]
+E             
+E             At index 0 diff: #x1B[0m[#x1B[94m1400#x1B[39;49;00m, #x1B[94m0.987654321#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mana has apples#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, datetime.date(#x1B[94m2025#x1B[39;49;00m, #x1B[94m8#x1B[39;49;00m, #x1B[94m9#x1B[39;49;00m)]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1400#x1B[39;49;00m, #x1B[94m0.987654321#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mana has apples#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m, datetime.date(#x1B[94m2025#x1B[39;49;00m, #x1B[94m8#x1B[39;49;00m, #x1B[94m9#x1B[39;49;00m))#x1B[90m#x1B[39;49;00m
+E             Use -v to get more diff
+
+test_fetchall.py:86: AssertionError</failure></testcase><testcase classname="tests3.test_fetchmany" name="test_fetchmany_error_no_query" time="0.056" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany_default_array_size" time="0.210" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-1-1]" time="0.222" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-1-3]" time="0.210" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-1-5]" time="0.223" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-1-7]" time="0.199" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-1-9]" time="0.222" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-2-1]" time="0.217" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-2-3]" time="0.207" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-2-5]" time="0.220" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-2-7]" time="0.204" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-2-9]" time="0.207" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-3-1]" time="0.205" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-3-3]" time="0.210" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-3-5]" time="0.221" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-3-7]" time="0.203" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[3-3-9]" time="0.208" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-1-1]" time="0.224" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-1-3]" time="0.202" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-1-5]" time="0.210" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-1-7]" time="0.209" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-1-9]" time="0.211" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-2-1]" time="0.201" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-2-3]" time="0.205" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-2-5]" time="0.215" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-2-7]" time="0.217" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-2-9]" time="0.206" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-3-1]" time="0.200" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-3-3]" time="0.201" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-3-5]" time="0.227" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-3-7]" time="0.218" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[6-3-9]" time="0.219" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-1-1]" time="0.207" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-1-3]" time="0.209" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-1-5]" time="0.202" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-1-7]" time="0.229" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-1-9]" time="0.199" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-2-1]" time="0.215" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-2-3]" time="0.203" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-2-5]" time="0.202" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-2-7]" time="0.235" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-2-9]" time="0.203" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-3-1]" time="0.203" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-3-3]" time="0.201" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-3-5]" time="0.211" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-3-7]" time="0.206" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[7-3-9]" time="0.210" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-1-1]" time="0.213" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-1-3]" time="0.203" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-1-5]" time="0.200" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-1-7]" time="0.229" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-1-9]" time="0.217" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-2-1]" time="0.226" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-2-3]" time="0.221" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-2-5]" time="0.216" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-2-7]" time="0.209" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-2-9]" time="0.209" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-3-1]" time="0.217" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-3-3]" time="0.206" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-3-5]" time="0.222" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-3-7]" time="0.202" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany[9-3-9]" time="0.199" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany_empty_table" time="0.266" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany_nosize" time="1.510"><failure message="AssertionError: assert [[Decimal('1'..., 'myName-1']] == [(1, 21, 'myName-1')]&#10;  &#10;  At index 0 diff: #x1B[0m[Decimal(#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m), #x1B[94m21#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mmyName-1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m, #x1B[94m21#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mmyName-1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m&#10;  Use -v to get more diff">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924BDA5F0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924BDA560&gt;)
+fetchmany_table = 'dbapi20test_fetchmany'
+
+    def test_fetchmany_nosize(cubrid_db_cursor, fetchmany_table):
+        cur, _ = cubrid_db_cursor
+    
+        cur.execute(f"select * from {fetchmany_table}")
+        data = cur.fetchmany()
+        assert len(data) == 1
+&gt;       assert data == [(1, 21, 'myName-1')]
+E       AssertionError: assert [[Decimal('1'..., 'myName-1']] == [(1, 21, 'myName-1')]
+E         
+E         At index 0 diff: #x1B[0m[Decimal(#x1B[33m'#x1B[39;49;00m#x1B[33m1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m), #x1B[94m21#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mmyName-1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m]#x1B[90m#x1B[39;49;00m != #x1B[0m(#x1B[94m1#x1B[39;49;00m, #x1B[94m21#x1B[39;49;00m, #x1B[33m'#x1B[39;49;00m#x1B[33mmyName-1#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m)#x1B[90m#x1B[39;49;00m
+E         Use -v to get more diff
+
+test_fetchmany.py:108: AssertionError</failure></testcase><testcase classname="tests3.test_fetchmany" name="test_fetchmany_negativeone" time="1.505" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany_zero" time="1.531" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany_all" time="1.526" /><testcase classname="tests3.test_fetchmany" name="test_fetchmany_overflow" time="1.514" /><testcase classname="tests3.test_fetchone" name="test_fetchone_error_before_select" time="0.055" /><testcase classname="tests3.test_fetchone" name="test_fetchone_error_no_rows" time="0.102"><skipped type="pytest.xfail" message="CCI does not return error when fetchone cannot return rows" /></testcase><testcase classname="tests3.test_fetchone" name="test_fetchone_return_none_no_rows" time="0.131" /><testcase classname="tests3.test_fetchone" name="test_fetchone" time="0.140" /><testcase classname="tests3.test_fetchone" name="test_fetchone_multi" time="0.214" /><testcase classname="tests3.test_set" name="test_set_prepare_int" time="0.112"><failure message="_cubrid.InterfaceError: (-30006, 'ERROR: CLIENT, -30006, Invalid parameter')">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E92434DD80&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E92434EAD0&gt;)
+
+    def test_set_prepare_int(cubrid_db_cursor):
+        samples = [((1, 2, 3, 4), (5, 6, 7))]
+&gt;       inserted = _test_set_prepare(cubrid_db_cursor[0],
+            'col_1 set(int), col_2 set(int)', samples, 2)
+
+test_set.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_set.py:11: in _test_set_prepare
+    cur.executemany(f"insert into {table_name} values ({placeholders})", samples)
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:137: in executemany
+    self.execute(query, *(p,))
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:113: in execute
+    self._bind_params(args, set_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E92434DD80&gt;, args = [(1, 2, 3, 4), (5, 6, 7)], set_type = None
+
+    def _bind_params(self, args,set_type=None):
+        self.__check_state()
+        if type(args) not in (tuple, list):
+            args = [args,]
+        args = list(args)
+        for i in range(len(args)):
+            if args[i] is None:
+                pass
+            elif isinstance(args[i], bool):
+                if args[i] == True:
+                    args[i] = '1'
+                else:
+                    args[i] = '0'
+            elif isinstance(args[i], tuple):
+                 args[i] = args[i]
+            else:
+                # Python3.X dosen't support unicode keyword.
+                try:
+                    mytest = unicode
+                except NameError:
+                    if isinstance(args[i], str):
+                        pass
+                    elif isinstance(args[i], bytes):
+                        args[i] = args[i].decode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+                else:
+                    if isinstance(args[i], unicode):
+                        args[i] = args[i].encode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+    
+            if type(args[i]) != tuple:
+                self._cs.bind_param(i+1, args[i])
+            else:
+                if set_type is None:
+                    data_type = int(FIELD_TYPE.CHAR)
+                else:
+                    if type(set_type) != tuple:
+                        set_type = [set_type,]
+                    data_type = set_type[i]
+    
+                s = self.con.connection.set()
+&gt;               s.imports(args[i], data_type)
+E               _cubrid.InterfaceError: (-30006, 'ERROR: CLIENT, -30006, Invalid parameter')
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:88: InterfaceError</failure></testcase><testcase classname="tests3.test_set" name="test_set_prepare_char_int" time="0.112"><failure message="_cubrid.InterfaceError: (-30006, 'ERROR: CLIENT, -30006, Invalid parameter')">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924322110&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E9243202E0&gt;)
+
+    def test_set_prepare_char_int(cubrid_db_cursor):
+        samples = [(('a','b','c','d'), (5, 6, 7))]
+&gt;       inserted = _test_set_prepare(cubrid_db_cursor[0],
+            'col_1 set(char), col_2 set(int)', samples, 2)
+
+test_set.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_set.py:11: in _test_set_prepare
+    cur.executemany(f"insert into {table_name} values ({placeholders})", samples)
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:137: in executemany
+    self.execute(query, *(p,))
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:113: in execute
+    self._bind_params(args, set_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924322110&gt;, args = [('a', 'b', 'c', 'd'), (5, 6, 7)], set_type = None
+
+    def _bind_params(self, args,set_type=None):
+        self.__check_state()
+        if type(args) not in (tuple, list):
+            args = [args,]
+        args = list(args)
+        for i in range(len(args)):
+            if args[i] is None:
+                pass
+            elif isinstance(args[i], bool):
+                if args[i] == True:
+                    args[i] = '1'
+                else:
+                    args[i] = '0'
+            elif isinstance(args[i], tuple):
+                 args[i] = args[i]
+            else:
+                # Python3.X dosen't support unicode keyword.
+                try:
+                    mytest = unicode
+                except NameError:
+                    if isinstance(args[i], str):
+                        pass
+                    elif isinstance(args[i], bytes):
+                        args[i] = args[i].decode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+                else:
+                    if isinstance(args[i], unicode):
+                        args[i] = args[i].encode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+    
+            if type(args[i]) != tuple:
+                self._cs.bind_param(i+1, args[i])
+            else:
+                if set_type is None:
+                    data_type = int(FIELD_TYPE.CHAR)
+                else:
+                    if type(set_type) != tuple:
+                        set_type = [set_type,]
+                    data_type = set_type[i]
+    
+                s = self.con.connection.set()
+&gt;               s.imports(args[i], data_type)
+E               _cubrid.InterfaceError: (-30006, 'ERROR: CLIENT, -30006, Invalid parameter')
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:88: InterfaceError</failure></testcase><testcase classname="tests3.test_set" name="test_set_prepare_char" time="0.110"><failure message="_cubrid.InterfaceError: (-30006, 'ERROR: CLIENT, -30006, Invalid parameter')">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E9243410F0&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924340FA0&gt;)
+
+    def test_set_prepare_char(cubrid_db_cursor):
+        samples = [(('a','b','c','d'),)]
+&gt;       inserted = _test_set_prepare(cubrid_db_cursor[0], 'col_1 set(CHAR)', samples, 1)
+
+test_set.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_set.py:11: in _test_set_prepare
+    cur.executemany(f"insert into {table_name} values ({placeholders})", samples)
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:137: in executemany
+    self.execute(query, *(p,))
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:113: in execute
+    self._bind_params(args, set_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E9243410F0&gt;, args = [('a', 'b', 'c', 'd')], set_type = None
+
+    def _bind_params(self, args,set_type=None):
+        self.__check_state()
+        if type(args) not in (tuple, list):
+            args = [args,]
+        args = list(args)
+        for i in range(len(args)):
+            if args[i] is None:
+                pass
+            elif isinstance(args[i], bool):
+                if args[i] == True:
+                    args[i] = '1'
+                else:
+                    args[i] = '0'
+            elif isinstance(args[i], tuple):
+                 args[i] = args[i]
+            else:
+                # Python3.X dosen't support unicode keyword.
+                try:
+                    mytest = unicode
+                except NameError:
+                    if isinstance(args[i], str):
+                        pass
+                    elif isinstance(args[i], bytes):
+                        args[i] = args[i].decode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+                else:
+                    if isinstance(args[i], unicode):
+                        args[i] = args[i].encode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+    
+            if type(args[i]) != tuple:
+                self._cs.bind_param(i+1, args[i])
+            else:
+                if set_type is None:
+                    data_type = int(FIELD_TYPE.CHAR)
+                else:
+                    if type(set_type) != tuple:
+                        set_type = [set_type,]
+                    data_type = set_type[i]
+    
+                s = self.con.connection.set()
+&gt;               s.imports(args[i], data_type)
+E               _cubrid.InterfaceError: (-30006, 'ERROR: CLIENT, -30006, Invalid parameter')
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:88: InterfaceError</failure></testcase><testcase classname="tests3.test_set" name="test_set_prepare_string" time="0.108"><failure message="_cubrid.InterfaceError: (-30006, 'ERROR: CLIENT, -30006, Invalid parameter')">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924323040&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924321990&gt;)
+
+    def test_set_prepare_string(cubrid_db_cursor):
+        samples = [(('abc','bcd','ceee','dddddd'),)]
+&gt;       inserted = _test_set_prepare(cubrid_db_cursor[0], 'col_1 set(varchar)', samples, 1)
+
+test_set.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_set.py:11: in _test_set_prepare
+    cur.executemany(f"insert into {table_name} values ({placeholders})", samples)
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:137: in executemany
+    self.execute(query, *(p,))
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:113: in execute
+    self._bind_params(args, set_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924323040&gt;, args = [('abc', 'bcd', 'ceee', 'dddddd')], set_type = None
+
+    def _bind_params(self, args,set_type=None):
+        self.__check_state()
+        if type(args) not in (tuple, list):
+            args = [args,]
+        args = list(args)
+        for i in range(len(args)):
+            if args[i] is None:
+                pass
+            elif isinstance(args[i], bool):
+                if args[i] == True:
+                    args[i] = '1'
+                else:
+                    args[i] = '0'
+            elif isinstance(args[i], tuple):
+                 args[i] = args[i]
+            else:
+                # Python3.X dosen't support unicode keyword.
+                try:
+                    mytest = unicode
+                except NameError:
+                    if isinstance(args[i], str):
+                        pass
+                    elif isinstance(args[i], bytes):
+                        args[i] = args[i].decode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+                else:
+                    if isinstance(args[i], unicode):
+                        args[i] = args[i].encode(self.charset)
+                    else:
+                        args[i] = str(args[i])
+    
+            if type(args[i]) != tuple:
+                self._cs.bind_param(i+1, args[i])
+            else:
+                if set_type is None:
+                    data_type = int(FIELD_TYPE.CHAR)
+                else:
+                    if type(set_type) != tuple:
+                        set_type = [set_type,]
+                    data_type = set_type[i]
+    
+                s = self.con.connection.set()
+&gt;               s.imports(args[i], data_type)
+E               _cubrid.InterfaceError: (-30006, 'ERROR: CLIENT, -30006, Invalid parameter')
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:88: InterfaceError</failure></testcase><testcase classname="tests3.test_set" name="test_set_prepare_bit" time="0.114"><failure message="_cubrid.IntegrityError: (-494, 'ERROR: DBMS, -494, Semantic: Cannot coerce host var to type set. [CAS INFO-192.168.2.32:33000,1,2781048].')">cubrid_db_cursor = (&lt;CUBRIDdb.cursors.Cursor object at 0x000001E924213040&gt;, &lt;CUBRIDdb.connections.Connection object at 0x000001E924212140&gt;)
+
+    def test_set_prepare_bit(cubrid_db_cursor):
+        samples = [((b'\x14', b'\x12\x90'),)]
+&gt;       inserted = _test_set_prepare(cubrid_db_cursor[0], 'col_1 set(bit(16))', samples, 1)
+
+test_set.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test_set.py:11: in _test_set_prepare
+    cur.executemany(f"insert into {table_name} values ({placeholders})", samples)
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:137: in executemany
+    self.execute(query, *(p,))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;CUBRIDdb.cursors.Cursor object at 0x000001E924213040&gt;, query = 'insert into dbapi20test_set_prepare values (?)'
+args = ((b'\x14', b'\x12\x90'),), set_type = None
+
+    def execute(self, query, args=None, set_type=None):
+        """
+        Execute a query.
+    
+        query -- string, query to execute on server
+        args -- optional sequence or mapping, parameters to use with query.
+    
+        Returns long integer rows affected, if any
+        """
+        self.__check_state()
+    
+        if not isinstance(query, (bytes, bytearray)):
+            stmt = query.encode(self.charset)
+        else:
+            stmt = query
+    
+        if sys.version_info &gt;= (3, 0):
+            stmt = stmt.decode()
+    
+        self._cs.prepare(stmt)
+    
+        if args is not None:
+            self._bind_params(args, set_type)
+    
+&gt;       r = self._cs.execute()
+E       _cubrid.IntegrityError: (-494, 'ERROR: DBMS, -494, Semantic: Cannot coerce host var to type set. [CAS INFO-192.168.2.32:33000,1,2781048].')
+
+C:\python\Python310\lib\site-packages\CUBRIDdb\cursors.py:115: IntegrityError</failure></testcase></testsuite></testsuites>
