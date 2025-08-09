@@ -42,6 +42,12 @@ class BaseCursor(object):
         self._cs.close()
         self._cs = None
 
+    def _prepare(self, query):
+        if isinstance(query, (bytes, bytearray)):
+            query = query.decode()
+
+        self._cs.prepare(query)
+
     def _bind_params(self, args,set_type=None):
         self.__check_state()
         if type(args) not in (tuple, list):
