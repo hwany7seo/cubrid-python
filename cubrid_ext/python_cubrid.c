@@ -1522,6 +1522,7 @@ _cubrid_CursorObject_init (_cubrid_CursorObject * self, PyObject * args,
   self->cursor_pos = 0;
 
   memset (self->charset, 0, sizeof (self->charset));
+  strncpy(self->charset, "utf8", sizeof (self->charset) - 1);
 
   return 0;
 }
