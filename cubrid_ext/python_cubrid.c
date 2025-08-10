@@ -1522,7 +1522,6 @@ _cubrid_CursorObject_init (_cubrid_CursorObject * self, PyObject * args,
   self->cursor_pos = 0;
 
   memset (self->charset, 0, sizeof (self->charset));
-  strncpy(self->charset, "utf8", sizeof (self->charset) - 1);
 
   return 0;
 }
@@ -2572,7 +2571,7 @@ _cubrid_row_to_tuple (_cubrid_CursorObject * self)
     {
       return handle_error (CUBRID_ER_INVALID_CURSOR, NULL);
     }
-  row = PyList_New (self->col_count);
+  row = PyTuple_New (self->col_count);
 
   for (i = 0; i < self->col_count; i++)
     {
@@ -2586,7 +2585,7 @@ _cubrid_row_to_tuple (_cubrid_CursorObject * self)
 	{
 	  val = _cubrid_CursorObject_dbval_to_pyvalue (self, type, i + 1);
 	}
-      PyList_SetItem (row, i, val);
+      PyTuple_SetItem (row, i, val);
     }
 
   return row;
