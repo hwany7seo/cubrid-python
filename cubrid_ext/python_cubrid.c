@@ -2306,6 +2306,7 @@ _cubrid_CursorObject_dbval_to_pyvalue (_cubrid_CursorObject * self, int type,
   T_CCI_DATE dt;
   char *str_buffer;
   int len;
+  CUBRID_LONG_LONG int64_value;
 
   if (self->state == CURSOR_STATE_CLOSED)
     {
@@ -2370,6 +2371,22 @@ _cubrid_CursorObject_dbval_to_pyvalue (_cubrid_CursorObject * self, int type,
       else
 	{
 	  val = _cubrid_return_PyInt_FromLong (num);
+	}
+      break;
+    case CCI_U_TYPE_BIGINT:
+      res = cci_get_data (self->handle, index, CCI_A_TYPE_BIGINT, &int64_value, &ind);
+      if (res < 0)
+	{
+	  return handle_error (res, NULL);
+	}
+      if (ind < 0)
+	{
+	  Py_INCREF (Py_None);
+	  return Py_None;
+	}
+      else
+	{
+	  val = PyLong_FromLongLong (int64_value);
 	}
       break;
     case CCI_U_TYPE_FLOAT:
