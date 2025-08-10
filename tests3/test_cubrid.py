@@ -146,8 +146,8 @@ def test_client_version(cubrid_connection):
     assert version is not None, "The client version should not be None"
 
     # Define a pattern to match the Python driver version format: major.minor.patch.build
-    # This matches the format defined in version.h (e.g., "11.2.1.0001")
-    version_pattern = r'^\d+\.\d+\.\d+$'
+    # This matches the format defined in version.h (e.g., "11.2.1.0062")
+    version_pattern = r'^\d+\.\d+\.\d+\.\d+$'
 
     # Use re.match to check if the version matches the expected pattern
     assert re.match(version_pattern, version), f"Version '{version}' does not match the "\
