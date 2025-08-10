@@ -5,8 +5,8 @@ want to make your own subclasses. In most cases, you will probably
 override Connection.default_cursor with a non-standard Cursor class.
 
 """
+from _cubrid import connect as cubrid_connect
 from CUBRIDdb.cursors import *
-import _cubrid
 
 
 class Connection(object):
@@ -25,6 +25,7 @@ class Connection(object):
         https://peps.python.org/pep-0249/#id48
         """
         self.charset = charset
+        self.fetch_value_converter = None
 
         self.connection = cubrid_connect(
             url = dsn,
@@ -44,6 +45,10 @@ class Connection(object):
             cursorClass = DictCursor
         else:
             cursorClass = Cursor
+
+        if hasattr(self, 'fetch_value_converter'):
+            cursorClass.fetch_value_converter = self.fetch_value_converter
+
         return cursorClass(self)
 
     def set_autocommit(self, value):

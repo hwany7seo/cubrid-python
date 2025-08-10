@@ -18,7 +18,7 @@ class BaseCursor(object):
         self.con = conn
         self._cs = conn.connection.cursor()
         if self._cs is None:
-            raise InterfaceError("Bad connection, invalid cursor")
+            raise Exception("Bad connection, invalid cursor")
 
         self.arraysize = 1
         self.rowcount = -1

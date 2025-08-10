@@ -55,12 +55,23 @@ BLOB = DBAPISet([FIELD_TYPE.BLOB])
 CLOB = DBAPISet([FIELD_TYPE.CLOB])
 ROWID = DBAPISet()
 
-def Connect(**kwargs):
-    """Factory function for connections.Connection."""
+def Connect(*args, **kwargs):
     from CUBRIDdb.connections import Connection
+
+    if args:
+        if len(args) >= 1:
+            kwargs['dsn'] = args[0]
+        elif len(args) >= 2:
+            kwargs['user'] = args[1]
+        elif len(args) >= 3:
+            kwargs['password'] = args[2]
+
     return Connection(**kwargs)
 
-connect = connection = Connect
+def connect(*args, **kwargs):
+    return Connect(*args, **kwargs)
+
+connection = Connect
 
 Error = Error
 InterfaceError = InterfaceError
