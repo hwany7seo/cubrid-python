@@ -613,8 +613,9 @@ def _are_files_identical(file1_path, file2_path, chunk_size=4096):
 def test_lob_file(cubrid_cursor):
     cur, con = cubrid_cursor
 
-    fp1 = 'tests/cubrid_logo.png'
-    fp2 = 'tests/lob_out.png'
+    base_dir = os.path.dirname(__file__)
+    fp1 = os.path.join(base_dir, 'cubrid_logo.png')
+    fp2 = os.path.join(base_dir, 'lob_out.png')
 
     try:
         cur.prepare('create table test_cubrid (picture blob)')

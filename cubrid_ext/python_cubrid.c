@@ -7,6 +7,10 @@
 #include <windows.h>
 #else
 #include <dlfcn.h>
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 #endif
 
 #ifndef Py_TYPE
@@ -3272,7 +3276,7 @@ _cubrid_LobObject_import (_cubrid_LobObject * self, PyObject * args)
       _cubrid_LobObject_create (self, *type);
     }
 
-  fd = open (filename, O_RDONLY, 0400);
+  fd = open (filename, O_RDONLY | O_BINARY, 0400);
   if (fd < 0)
     {
       return handle_error (CUBRID_ER_OPEN_FILE, NULL);
@@ -3432,7 +3436,7 @@ _cubrid_LobObject_export (_cubrid_LobObject * self, PyObject * args)
       return handle_error (CUBRID_ER_LOB_NOT_EXIST, NULL);
     }
 
-  fp = open (filename, O_CREAT | O_WRONLY | O_TRUNC, 0666);
+  fp = open (filename, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0666);
   if (fp < 0)
     {
       return handle_error (CUBRID_ER_OPEN_FILE, NULL);
