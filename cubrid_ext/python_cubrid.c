@@ -3304,6 +3304,8 @@ _cubrid_LobObject_import (_cubrid_LobObject * self, PyObject * args)
       pos += size;
     }
 
+  close (fd);
+
   Py_INCREF (Py_None);
   return Py_None;
 }
@@ -3464,6 +3466,8 @@ _cubrid_LobObject_export (_cubrid_LobObject * self, PyObject * args)
 	  break;
 	}
     }
+
+  close (fp);
 
   Py_INCREF (Py_None);
   return Py_None;
