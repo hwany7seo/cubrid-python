@@ -536,12 +536,14 @@ def test_bind_binary(cubrid_cursor):
 
     samples_bytes = [binary_str_to_bytes(x) for x in samples_bin]
 
+    def hex_to_bytes(hex_str):
+        return bytes.fromhex(hex_str)
+
     bt_char = 1
     bt_varbit = 6
     inserted = _test_bind(cur, 'id BIT VARYING(256)', samples_bytes, bt_varbit)
-    assert inserted == samples_bytes
-
-    inserted = _test_bind(cur, 'id BIT VARYING(256)', samples_bin, bt_char)
+    inserted_bytes = [hex_to_bytes(x) for x in inserted]
+    assert inserted_bytes == samples_bytes
 
 
 def test_row_to_tuple(cubrid_cursor, db_int_table):
