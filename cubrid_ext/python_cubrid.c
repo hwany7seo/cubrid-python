@@ -147,6 +147,16 @@ _cubrid_return_PyBool_FromLong (long n)
   return PyBool_FromLong (n);
 }
 
+static PyObject *
+_cubrid_return_PyString_FromStringAndSize (const char *buf, Py_ssize_t size)
+{
+#if PY_MAJOR_VERSION >= 3
+  return PyBytes_FromStringAndSize (buf, size);
+#else
+  return PyString_FromStringAndSize (buf, size);
+#endif
+}
+
 static int
 get_error_msg (int err_code, char *err_msg)
 {
@@ -2320,6 +2330,7 @@ _cubrid_CursorObject_dbval_to_pyvalue (_cubrid_CursorObject * self, int type,
   switch (type)
     {
     case CCI_U_TYPE_BIT:	//CCI_A_TYPE_BIT
+    case CCI_U_TYPE_VARBIT:
       res = cci_get_data (self->handle, index, CCI_A_TYPE_STR, &buffer, &ind);
       if (res < 0)
 	{
@@ -2333,31 +2344,20 @@ _cubrid_CursorObject_dbval_to_pyvalue (_cubrid_CursorObject * self, int type,
       else
 	{
 	  len = strlen (buffer);
-	  str_buffer = (char *) malloc (len + 1);
-	  if (str_buffer == NULL)
+	  unsigned char* bin_data = (unsigned char*)malloc(len / 2);
+	  if (bin_data == NULL)
 	    {
 	      Py_INCREF (Py_None);
 	      return Py_None;
 	    }
-	  memset (str_buffer, 0, len + 1);
-	  memcpy (str_buffer, buffer, len);
-	  /*while(str_buffer[len-1] == '0' && len>1)
-	     {
-	     str_buffer[len-1]='\0';
-	     len--;
-	     } */
-	  if (self->charset != NULL && *(self->charset) != '\0')
+	  for (int i = 0; i < len; i += 2)
 	    {
-	      val =
-		_cubrid_return_PyUnicode_FromString (str_buffer,
-						     strlen (str_buffer),
-						     self->charset, NULL);
+	      char hex[3] = {buffer[i], buffer[i + 1], 0};
+	      unsigned long byte = strtoul(hex, NULL, 16);
+	      bin_data[i / 2] = (unsigned char)byte;
 	    }
-	  else
-	    {
-	      val = _cubrid_return_PyString_FromString (str_buffer);
-	    }
-	  free (str_buffer);
+	  val = _cubrid_return_PyString_FromStringAndSize((const char*)bin_data, len / 2);
+	  free(bin_data);
 	}
 
       break;
