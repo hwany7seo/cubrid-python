@@ -77,9 +77,11 @@ if process.returncode == 0:
 driver_version = version + "." + str(serial_number)
 
 if str(serial_number) == '':
+    print('using version.h')
     with open('cubrid_ext/version.h', 'r', encoding='utf-8') as file:
         driver_version = file.read().split('"')[1]
 else:
+    print('using version.h.template')
     if sys.version_info.major >= 3:
         with open('cubrid_ext/version.h.template', 'r', encoding='utf-8') as file:
             template_content = file.read()
