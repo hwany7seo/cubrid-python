@@ -3727,16 +3727,16 @@ _cubrid_SetObject_import (_cubrid_SetObject * self, PyObject * args)
     }
   num = PyTuple_GET_SIZE (pTube);
   data = (char **) _cubrid_get_data_buf (type, num + 1);
-  potinter = (char **) _cubrid_get_data_buf (type, num + 1);
+  pointer = (char **) _cubrid_get_data_buf (type, num + 1);
   indicator = (int *) _cubrid_dup_buf (NULL, sizeof (int) * (num + 1));
 
 
   for (i = 0; i < num; ++i)
     {
       pValue = PyTuple_GET_ITEM (pTube, i);
-      potinter[i] = _cubrid_return_PyString_AsString (pValue);
+      pointer[i] = _cubrid_return_PyString_AsString (pValue);
 
-      if (potinter[i] == NULL || (strlen (pointer[i]) == 0))
+      if (pointer[i] == NULL || (strlen (pointer[i]) == 0))
 	{
 	  return handle_error (CUBRID_ER_INVALID_PARAM, NULL);
 	}
