@@ -157,8 +157,8 @@ _cubrid_return_PyString_FromStringAndSize (const char *buf, Py_ssize_t size)
 #endif
 }
 
-static PyObject *
-_cubrid_return_PyString_AsString (const char *buf)
+static const char *
+_cubrid_return_PyString_AsString (PyObject *buf)
 {
 #if PY_MAJOR_VERSION >= 3
   return PyUnicode_AsUTF8 (buf);
