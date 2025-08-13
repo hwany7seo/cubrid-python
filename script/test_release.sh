@@ -103,9 +103,9 @@ check_version() {
     DRIVER_VERSION="$VERSION.$SERIAL_NUMBER"
     echo "[CHECK] Driver version: $DRIVER_VERSION"
     
-    PYTHON_WHEEL[0]="CUBRID_Python-$DRIVER_VERSION-cp36-cp36m-linux_x86_64.whl"
-    PYTHON_WHEEL[1]="CUBRID_Python-$DRIVER_VERSION-cp310-cp310-linux_x86_64.whl"
-    PYTHON_WHEEL[2]="CUBRID_Python-$DRIVER_VERSION-cp311-cp311-linux_x86_64.whl"
+    PYTHON_WHEEL[0]="cubrid_python-$DRIVER_VERSION-cp36-cp36m-linux_x86_64.whl"
+    PYTHON_WHEEL[1]="cubrid_python-$DRIVER_VERSION-cp310-cp310-linux_x86_64.whl"
+    PYTHON_WHEEL[2]="cubrid_python-$DRIVER_VERSION-cp311-cp311-linux_x86_64.whl"
     PYTHON_WHEEL[3]="cubrid_python-$DRIVER_VERSION-cp312-cp312-linux_x86_64.whl"
 }
 
