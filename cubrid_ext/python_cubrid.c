@@ -157,6 +157,16 @@ _cubrid_return_PyString_FromStringAndSize (const char *buf, Py_ssize_t size)
 #endif
 }
 
+static PyObject *
+_cubrid_return_PyString_AsString (const char *buf)
+{
+#if PY_MAJOR_VERSION >= 3
+  return PyUnicode_AsUTF8 (buf);
+#else
+  return PyString_AsString (buf);
+#endif
+}
+
 static int
 get_error_msg (int err_code, char *err_msg)
 {
@@ -1022,7 +1032,7 @@ _cubrid_ConnectionObject_batch_execute (_cubrid_ConnectionObject * self,
   for (i = 0; i < count; ++i)
     {
       p_value = PyTuple_GET_ITEM (p_tube, i);
-      sql[i] = PyString_AsString (p_value);
+      sql[i] = _cubrid_return_PyString_AsString (p_value);
     }
   n_executed = cci_execute_batch (self->handle, count, sql, &result, &cci_error);
   if (n_executed < 0)
@@ -3695,7 +3705,7 @@ _cubrid_str2bit (char *str)
 static PyObject *
 _cubrid_SetObject_import (_cubrid_SetObject * self, PyObject * args)
 {
-  char **data = NULL, **potinter = NULL;
+  char **data = NULL, **pointer = NULL;
   int *indicator = NULL;
   int i = 0, type, num = 1;
   T_CCI_SET set;
@@ -3724,14 +3734,14 @@ _cubrid_SetObject_import (_cubrid_SetObject * self, PyObject * args)
   for (i = 0; i < num; ++i)
     {
       pValue = PyTuple_GET_ITEM (pTube, i);
-      potinter[i] = PyString_AsString (pValue);
+      potinter[i] = _cubrid_return_PyString_AsString (pValue);
 
-      if (potinter[i] == NULL || (strlen (potinter[i]) == 0))
+      if (potinter[i] == NULL || (strlen (pointer[i]) == 0))
 	{
 	  return handle_error (CUBRID_ER_INVALID_PARAM, NULL);
 	}
 
-      if (strcmp (potinter[i], "NULL") == 0)
+      if (strcmp (pointer[i], "NULL") == 0)
 	{
 	  indicator[i] = 1;
 	}
@@ -3751,19 +3761,19 @@ _cubrid_SetObject_import (_cubrid_SetObject * self, PyObject * args)
 	{
 	  if (indicator[i] == 1)
 	    continue;
-	  temp_data_char = _cubrid_str2bit ((char *) potinter[i]);
+	  temp_data_char = _cubrid_str2bit ((char *) pointer[i]);
 	  if (temp_data_char == NULL)
 	    {
 	      goto handle_error;
 	    }
 	  pBit = (T_CCI_BIT *) data;
 	  pBit[i].buf = temp_data_char;
-	  pBit[i].size = strlen ((char *) potinter[i]) / 8 + 1;
+	  pBit[i].size = strlen ((char *) pointer[i]) / 8 + 1;
 	}
       break;
     default:
       err_code =
-	cci_set_make (&set, CCI_U_TYPE_STRING, num, potinter,
+	cci_set_make (&set, CCI_U_TYPE_STRING, num, pointer,
 		      (int *) indicator);
       if (err_code < 0)
 	{
@@ -3773,7 +3783,7 @@ _cubrid_SetObject_import (_cubrid_SetObject * self, PyObject * args)
       Py_INCREF (Py_None);
       free (data);
       free (indicator);
-      free (potinter);
+      free (pointer);
       return Py_None;
     }
 
@@ -3803,13 +3813,13 @@ _cubrid_SetObject_import (_cubrid_SetObject * self, PyObject * args)
   Py_INCREF (Py_None);
   free (data);
   free (indicator);
-  free (potinter);
+  free (pointer);
   return Py_None;
 
 handle_error:
   free (data);
   free (indicator);
-  free (potinter);
+  free (pointer);
   return handle_error (CUBRID_ER_INVALID_PARAM, NULL);
 }
 
