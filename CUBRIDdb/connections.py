@@ -14,7 +14,7 @@ class Connection(object):
 
     def __init__(self, *,
         dsn = "",
-        user = "",
+        user = "public",
         password = "",
         charset = "utf8",
     ):

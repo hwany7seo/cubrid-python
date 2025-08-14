@@ -62,9 +62,9 @@ def Connect(*args, **kwargs):
     if args:
         if len(args) >= 1:
             kwargs['dsn'] = args[0]
-        elif len(args) >= 2:
+        if len(args) >= 2:
             kwargs['user'] = args[1]
-        elif len(args) >= 3:
+        if len(args) >= 3:
             kwargs['password'] = args[2]
 
     return Connection(**kwargs)
