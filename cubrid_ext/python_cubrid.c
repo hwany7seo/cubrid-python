@@ -424,7 +424,7 @@ _cubrid_ConnectionObject_init (_cubrid_ConnectionObject * self,
 {
   static char *kwList[] = { "url", "user", "passwd", NULL };
   char *url = NULL;
-  char *user = "public";
+  char *user = "";
   char *passwd = "";
   char buf[1024] = { '\0' };
   int con, res, level, autocommit, lock_timeout, max_string_len;
