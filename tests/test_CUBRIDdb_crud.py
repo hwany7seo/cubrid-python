@@ -377,7 +377,7 @@ def suite():
     return suite
 
 if __name__ == '__main__':
-    log_file = 'test_CUBRIDdb_etc.result'
+    log_file = 'test_CUBRIDdb_crud.result'
     f = open(log_file, "w")
     suite = unittest.TestLoader().loadTestsFromTestCase(CUBRIDdb_crud_test)
     unittest.TextTestRunner(verbosity=2, stream=f).run(suite)

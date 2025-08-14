@@ -171,6 +171,8 @@ run_testcase() {
         cat test_cubrid.result >> test_python.log
         "${PYTHON_PATH[$PYTHON_COUNT]}" test_CUBRIDdb.py
         cat test_CUBRIDdb.result >> test_python.log
+        "${PYTHON_PATH[$PYTHON_COUNT]}" test_CUBRIDdb_crud.py
+        cat test_CUBRIDdb_crud.result >> test_python.log
         PYTHON_COUNT=$((PYTHON_COUNT + 1))
     done
     
