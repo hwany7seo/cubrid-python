@@ -136,19 +136,37 @@ exit /b 0
 :run_testcase
 echo "Run Testcase"
 cd /d "%TEMP_DIR%\cubrid-python\tests"
+if exist "%SHELL_DIR%\test1_python.log" (
+    del "%SHELL_DIR%\test1_python.log"
+)
 if %PYTHON_COUNT% lss %PYTHON_EXECUTE_END% (
-    echo "RUN !PYTHON_EXECUTE[%PYTHON_COUNT%]!\python.exe" >> test_python.log
+    echo "RUN !PYTHON_EXECUTE[%PYTHON_COUNT%]!\python.exe" >> "%SHELL_DIR%\test1_python.log"
     call "%%PYTHON_EXECUTE[%PYTHON_COUNT%]%%\python.exe" test_cubrid.py
-    call type test_cubrid.result >> test_python.log
+    call type test_cubrid.result >> "%SHELL_DIR%\test1_python.log"
     call "%%PYTHON_EXECUTE[%PYTHON_COUNT%]%%\python.exe" test_CUBRIDdb.py
-    call type test_CUBRIDdb.result >> test_python.log
+    call type test_CUBRIDdb.result >> "%SHELL_DIR%\test1_python.log"
     call "%%PYTHON_EXECUTE[%PYTHON_COUNT%]%%\python.exe" test_CUBRIDdb_crud.py
-    call type test_CUBRIDdb_crud.result >> test_python.log
+    call type test_CUBRIDdb_crud.result >> "%SHELL_DIR%\test1_python.log"
     set /a PYTHON_COUNT+=1
     goto run_testcase
 )
 set /a PYTHON_COUNT=0
 call type test_python.log
+exit /b 0
+
+:run_testcase3
+echo "Run Testcase 3"
+cd /d "%TEMP_DIR%\cubrid-python\tests3"
+if exist "%SHELL_DIR%\test3_python.log" (
+    del "%SHELL_DIR%\test3_python.log"
+)
+if %PYTHON_COUNT% lss %PYTHON_EXECUTE_END% (
+    echo "RUN !PYTHON_EXECUTE[%PYTHON_COUNT%]!\python.exe" >> "%SHELL_DIR%\test3_python.log"
+    call "%%PYTHON_EXECUTE[%PYTHON_COUNT%]%%\python.exe" -m pytest >> "%SHELL_DIR%\test3_python.log"
+    set /a PYTHON_COUNT+=1
+    goto run_testcase3
+)
+set /a PYTHON_COUNT=0
 exit /b 0
 
 :show_usage

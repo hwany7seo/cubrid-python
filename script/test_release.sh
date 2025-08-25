@@ -79,6 +79,8 @@ main() {
     install_driver
     echo "Run Testcase"
     run_testcase
+    echo "Run Testcase3"
+    run_testcase3
     exit 0
 }
 
@@ -161,19 +163,37 @@ run_testcase() {
     echo "Run Testcase"
     cd "$TEMP_DIR/cubrid-python/tests"
     
+    if [ -f "$SHELL_DIR/test1_python.log" ]; then
+        rm "$SHELL_DIR/test1_python.log"
+    fi
+
     while [ $PYTHON_COUNT -lt $PYTHON_EXECUTE_END ]; do
-        echo "RUN ${PYTHON_PATH[$PYTHON_COUNT]}" >> test_python.log
+        echo "RUN ${PYTHON_PATH[$PYTHON_COUNT]}" >> "$SHELL_DIR/test1_python.log"
         "${PYTHON_PATH[$PYTHON_COUNT]}" test_cubrid.py
-        cat test_cubrid.result >> test_python.log
+        cat test_cubrid.result >> "$SHELL_DIR/test1_python.log"
         "${PYTHON_PATH[$PYTHON_COUNT]}" test_CUBRIDdb.py
-        cat test_CUBRIDdb.result >> test_python.log
+        cat test_CUBRIDdb.result >> "$SHELL_DIR/test1_python.log"
         "${PYTHON_PATH[$PYTHON_COUNT]}" test_CUBRIDdb_crud.py
-        cat test_CUBRIDdb_crud.result >> test_python.log
+        cat test_CUBRIDdb_crud.result >> "$SHELL_DIR/test1_python.log"
         PYTHON_COUNT=$((PYTHON_COUNT + 1))
     done
     
     PYTHON_COUNT=0
-    cat test_python.log
+}
+
+run_testcase3() {
+    echo "Run Testcase 3"
+    cd "$TEMP_DIR/cubrid-python/tests3"
+
+    if [ -f "$SHELL_DIR/test3_python.log" ]; then
+        rm "$SHELL_DIR/test3_python.log"
+    fi
+    
+    while [ $PYTHON_COUNT -lt $PYTHON_EXECUTE_END ]; do
+        echo "RUN ${PYTHON_PATH[$PYTHON_COUNT]}" >> "$SHELL_DIR/test3_python.log"
+        "${PYTHON_PATH[$PYTHON_COUNT]}" -m pytest >> "$SHELL_DIR/test3_python.log"
+        PYTHON_COUNT=$((PYTHON_COUNT + 1))
+    done
 }
 
 # Show usage function
